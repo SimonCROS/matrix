@@ -1,19 +1,35 @@
-pub struct Vector<K> {
-    size: u16,
-    data: Vec<K>
+use super::Matrix;
+use std::ops::{Deref, DerefMut};
+
+#[derive(Default)]
+pub struct Vector<const SIZE: usize, K>(Matrix<1, SIZE, K>);
+
+impl<const SIZE: usize, K> Deref for Vector<SIZE, K> {
+    type Target = Matrix<1, SIZE, K>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
-impl<K> Vector<K> {
-    pub fn new(size: u16) -> Vector<K> {
-        Vector {
-            size,
-            data: Vec::with_capacity(size as usize)
-        }
+impl<const SIZE: usize, K> DerefMut for Vector<SIZE, K> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
     }
+}
 
-    /// Returns the size of the vector
-    /// (rows: u16, cols: u16)
-    pub fn size(&self) -> u16 {
-        self.size
+impl<const SIZE: usize, K> Vector<SIZE, K> {
+    pub fn size(&self) -> usize {
+        SIZE
+    }
+}
+
+#[cfg(test)]
+mod basic {
+    use super::Vector;
+
+    #[test]
+    fn size() {
+        let vector = Vector::<4, i32>::default();
+        assert_eq!(vector.size(), 4);
     }
 }

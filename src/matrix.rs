@@ -1,45 +1,57 @@
-use std::fmt;
+use std::fmt::{self, Display, Formatter};
 
-pub struct Matrix<K: Clone> {
-    rows: u16,
-    cols: u16,
-    data: Vec<K>
-}
+pub struct Matrix<const ROWS: usize, const COLS: usize, K>([[K; COLS]; ROWS]);
 
-impl<K: Clone> Matrix<K> {
-    pub fn new(rows: u16, cols: u16) -> Matrix<K> {
-        Matrix {
-            cols,
-            rows,
-            data: Vec::with_capacity((rows * cols) as usize)
-        }
-    }
-
+impl<const ROWS: usize, const COLS: usize, K> Matrix<ROWS, COLS, K> {
     /// Returns the size of the matrix in a tuple
-    /// (rows: u16, cols: u16)
-    pub fn size(&self) -> (u16, u16) {
-        (self.rows, self.cols)
+    /// (rows: usize, cols: usize)
+    pub fn size(&self) -> (usize, usize) {
+        (ROWS, COLS)
     }
 
     pub fn is_square(&self) -> bool {
-        self.rows == self.cols
-    }
-
-    pub fn to_string(&self) -> String {
-        let mut result = String::new();
-        for i in 0..self.rows {
-            result += "|";
-            for j in 0..self.cols {
-                result += &format!("{}", 0);//self.data[i * self.cols + j]
-            }
-            result += "|\n";
-        }
-        result
+        ROWS == COLS
     }
 }
 
-impl fmt::Display for Matrix<K> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.to_string())
+impl<const ROWS: usize, const COLS: usize, K: Default> Default for Matrix<ROWS, COLS, K> {
+    fn default() -> Self {
+        Self([[(); COLS]; ROWS].map(|row| row.map(|_| K::default())))
+    }
+}
+
+impl<const ROWS: usize, const COLS: usize, K: Display> Display for Matrix<ROWS, COLS, K> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        for line in &self.0 {
+            write!(f, "|")?;
+            for x in line {
+                write!(f, " {:^7.3} ", x)?
+            }
+            writeln!(f, "|")?
+        }
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod basic {
+    use super::Matrix;
+
+    #[test]
+    fn rows() {
+        let matrix = Matrix::<4, 2, i32>::default();
+        assert_eq!(matrix.size().0, 4);
+    }
+
+    #[test]
+    fn cols() {
+        let matrix = Matrix::<2, 3, i32>::default();
+        assert_eq!(matrix.size().1, 3);
+    }
+
+    #[test]
+    fn print() {
+        let matrix = Matrix::<2, 3, i32>::default();
+        assert_eq!(matrix.to_string(), "|    0        0        0    |\n|    0        0        0    |\n");
     }
 }
