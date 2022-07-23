@@ -1,4 +1,5 @@
 use std::fmt::{self, Display, Formatter};
+use std::slice::Iter;
 
 pub struct Matrix<const ROWS: usize, const COLS: usize, K>([[K; COLS]; ROWS]);
 
@@ -15,6 +16,10 @@ impl<const ROWS: usize, const COLS: usize, K> Matrix<ROWS, COLS, K> {
 
     pub fn is_square(&self) -> bool {
         ROWS == COLS
+    }
+
+    pub fn iter(&self) -> Iter<'_, [K; COLS]> {
+        self.0.iter()
     }
 }
 
