@@ -1,9 +1,11 @@
 use std::fmt::{self, Display, Formatter};
 use std::slice::Iter;
+use super::Field;
 
-pub struct Matrix<const ROWS: usize, const COLS: usize, K>([[K; COLS]; ROWS]);
+#[derive(Clone)]
+pub struct Matrix<const ROWS: usize, const COLS: usize, K>(pub [[K; COLS]; ROWS]);
 
-impl<const ROWS: usize, const COLS: usize, K> Matrix<ROWS, COLS, K> {
+impl<const ROWS: usize, const COLS: usize, K: Field> Matrix<ROWS, COLS, K> {
     pub fn new(content: [[K; COLS]; ROWS]) -> Self {
         Self(content)
     }

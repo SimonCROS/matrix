@@ -1,11 +1,12 @@
-use super::Matrix;
 use std::fmt::{self, Display, Formatter};
 use std::ops::{Deref, DerefMut};
+use super::Matrix;
+use super::Field;
 
-#[derive(Default)]
-pub struct Vector<const SIZE: usize, K>(Matrix<1, SIZE, K>);
+#[derive(Clone, Default)]
+pub struct Vector<const SIZE: usize, K: Field>(Matrix<1, SIZE, K>);
 
-impl<const SIZE: usize, K> Vector<SIZE, K> {
+impl<const SIZE: usize, K: Field> Vector<SIZE, K> {
     pub fn new(content: [K; SIZE]) -> Self {
         Self(Matrix::new([content]))
     }
@@ -13,22 +14,45 @@ impl<const SIZE: usize, K> Vector<SIZE, K> {
     pub fn size(&self) -> usize {
         SIZE
     }
+
+    pub fn to_matrix<const ROWS: usize, const COLS: usize>(&self) -> Matrix<ROWS, COLS, K> {
+        assert_eq!(ROWS * COLS, SIZE, "ROWS * COLS != SIZE");
+        Matrix::new([[(); COLS]; ROWS].map(|x| x.map(|_| self.0.0[0][0].clone())))
+    }
 }
 
-impl<const SIZE: usize, K> Deref for Vector<SIZE, K> {
+impl<const SIZE: usize, K: Field> Field for Vector<SIZE, K> {
+    pub fn add(self, other: Self) -> Self {
+        Self((4))
+    }
+
+    pub fn sub(self, other: Self) -> Self {
+        Self((4))
+    }
+
+    pub fn mul(self, other: Self) -> Self {
+        Self((4))
+    }
+
+    pub fn div(self, other: Self) -> Self {
+        Self((4))
+    }
+}
+
+impl<const SIZE: usize, K: Field> Deref for Vector<SIZE, K> {
     type Target = Matrix<1, SIZE, K>;
     fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
 
-impl<const SIZE: usize, K> DerefMut for Vector<SIZE, K> {
+impl<const SIZE: usize, K: Field> DerefMut for Vector<SIZE, K> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
     }
 }
 
-impl<const SIZE: usize, K: Display> Display for Vector<SIZE, K> {
+impl<const SIZE: usize, K: Field + Display> Display for Vector<SIZE, K> {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         for line in self.iter() {
             write!(f, "(")?;
