@@ -3,7 +3,7 @@ use std::slice::Iter;
 use super::Field;
 
 #[derive(Clone)]
-pub struct Matrix<const ROWS: usize, const COLS: usize, K>(pub [[K; COLS]; ROWS]);
+pub struct Matrix<const ROWS: usize, const COLS: usize, K: Field>(pub [[K; COLS]; ROWS]);
 
 impl<const ROWS: usize, const COLS: usize, K: Field> Matrix<ROWS, COLS, K> {
     pub fn new(content: [[K; COLS]; ROWS]) -> Self {
@@ -25,13 +25,13 @@ impl<const ROWS: usize, const COLS: usize, K: Field> Matrix<ROWS, COLS, K> {
     }
 }
 
-impl<const ROWS: usize, const COLS: usize, K: Default> Default for Matrix<ROWS, COLS, K> {
+impl<const ROWS: usize, const COLS: usize, K: Field + Default> Default for Matrix<ROWS, COLS, K> {
     fn default() -> Self {
         Self([[(); COLS]; ROWS].map(|row| row.map(|_| K::default())))
     }
 }
 
-impl<const ROWS: usize, const COLS: usize, K: Display> Display for Matrix<ROWS, COLS, K> {
+impl<const ROWS: usize, const COLS: usize, K: Field + Display> Display for Matrix<ROWS, COLS, K> {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         for line in &self.0 {
             write!(f, "|")?;
