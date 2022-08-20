@@ -1,7 +1,7 @@
+use super::Field;
+use super::Matrix;
 use std::fmt::{self, Display, Formatter};
 use std::ops::{Deref, DerefMut};
-use super::Matrix;
-use super::Field;
 
 #[derive(Clone, Default)]
 pub struct Vector<const SIZE: usize, K: Field>(Matrix<1, SIZE, K>);
@@ -17,25 +17,7 @@ impl<const SIZE: usize, K: Field> Vector<SIZE, K> {
 
     pub fn to_matrix<const ROWS: usize, const COLS: usize>(&self) -> Matrix<ROWS, COLS, K> {
         assert_eq!(ROWS * COLS, SIZE, "ROWS * COLS != SIZE");
-        Matrix::new([[(); COLS]; ROWS].map(|x| x.map(|_| self.0.0[0][0].clone())))
-    }
-}
-
-impl<const SIZE: usize, K: Field> Field for Vector<SIZE, K> {
-    pub fn add(self, other: Self) -> Self {
-        Self((4))
-    }
-
-    pub fn sub(self, other: Self) -> Self {
-        Self((4))
-    }
-
-    pub fn mul(self, other: Self) -> Self {
-        Self((4))
-    }
-
-    pub fn div(self, other: Self) -> Self {
-        Self((4))
+        Matrix::new([[(); COLS]; ROWS].map(|x| x.map(|_| self.0 .0[0][0].clone())))
     }
 }
 

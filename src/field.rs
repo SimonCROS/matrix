@@ -1,6 +1,5 @@
-use std::ops::{Add, Sub, Mul, Div};
+use std::ops::{Add, Div, Mul, Sub};
 
-pub trait Field: Add + Sub + Mul + Div + Clone + Sized {}
+pub trait Field: Add<Output = Self> + Sub<Output = Self> + Mul<Output = Self> + Div<Output = Self> + Clone + Sized {}
 
-impl<T> Field for T
-    where T: Add + Sub + Mul + Div + Clone + Sized {}
+impl<T> Field for T where T: Add<Output = Self> + Sub<Output = Self> + Mul<Output = Self> + Div<Output = Self> + Clone + Sized {}

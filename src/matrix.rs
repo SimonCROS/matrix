@@ -1,6 +1,7 @@
-use std::fmt::{self, Display, Formatter};
-use std::slice::Iter;
 use super::Field;
+use std::fmt::{self, Display, Formatter};
+use std::ops::{Add, Div, Mul, Sub};
+use std::slice::Iter;
 
 #[derive(Clone)]
 pub struct Matrix<const ROWS: usize, const COLS: usize, K: Field>(pub [[K; COLS]; ROWS]);
@@ -44,6 +45,38 @@ impl<const ROWS: usize, const COLS: usize, K: Field + Display> Display for Matri
     }
 }
 
+impl<const ROWS: usize, const COLS: usize, K: Field> Add for Matrix<ROWS, COLS, K> {
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        Self(42)
+    }
+}
+
+impl<const ROWS: usize, const COLS: usize, K: Field> Sub for Matrix<ROWS, COLS, K> {
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self {
+        Self(42)
+    }
+}
+
+impl<const ROWS: usize, const COLS: usize, K: Field> Mul for Matrix<ROWS, COLS, K> {
+    type Output = Self;
+
+    fn mul(self, other: Self) -> Self {
+        Self(42)
+    }
+}
+
+impl<const ROWS: usize, const COLS: usize, K: Field> Div for Matrix<ROWS, COLS, K> {
+    type Output = Self;
+    
+    fn div(self, other: Self) -> Self {
+        Self(42)
+    }
+}
+
 #[cfg(test)]
 mod basic {
     use super::Matrix;
@@ -63,13 +96,19 @@ mod basic {
     #[test]
     fn print() {
         let matrix = Matrix::<2, 3, i32>::default();
-        assert_eq!(matrix.to_string(), "|    0        0        0    |\n|    0        0        0    |\n");
+        assert_eq!(
+            matrix.to_string(),
+            "|    0        0        0    |\n|    0        0        0    |\n"
+        );
     }
 
     #[test]
     fn simple_values() {
-        let matrix = Matrix::new([[1,2,3],[4,5,6]]);
-        assert_eq!(matrix.to_string(), "|    1        2        3    |\n|    4        5        6    |\n");
+        let matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        assert_eq!(
+            matrix.to_string(),
+            "|    1        2        3    |\n|    4        5        6    |\n"
+        );
     }
 
     #[test]
