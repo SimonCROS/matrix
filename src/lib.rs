@@ -1,3 +1,6 @@
+#![feature(array_zip)]
+#![feature(trait_alias)]
+
 mod matrix;
 mod vector;
 mod field;
