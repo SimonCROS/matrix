@@ -35,7 +35,6 @@ impl<const N: usize, K: Field + Clone> From<Vector<N, K>> for Matrix<N, 1, K> {
     }
 }
 
-
 impl<const ROWS: usize, const COLS: usize, K: Field + Default> Default for Matrix<ROWS, COLS, K> {
     fn default() -> Self {
         Self([[(); COLS]; ROWS].map(|row| row.map(|_| K::default())))
@@ -80,38 +79,6 @@ impl<const ROWS: usize, const COLS: usize, K: Field> Mul for Matrix<ROWS, COLS, 
 }
 
 impl<const ROWS: usize, const COLS: usize, K: Field> Div for Matrix<ROWS, COLS, K> {
-    type Output = Self;
-    
-    fn div(self, other: Self) -> Self {
-        Self(self.0.zip(other.0).map(|(r1, r2)| r1.zip(r2).map(|(c1, c2)| c1 / c2)))
-    }
-}
-
-impl<const ROWS: usize, const COLS: usize, K: Field> Add for &Matrix<ROWS, COLS, K> {
-    type Output = Self;
-
-    fn add(self, other: Self) -> Self {
-        Self(self.0.zip(other.0).map(|(r1, r2)| r1.zip(r2).map(|(c1, c2)| c1 + c2)))
-    }
-}
-
-impl<const ROWS: usize, const COLS: usize, K: Field> Sub for &Matrix<ROWS, COLS, K> {
-    type Output = Self;
-
-    fn sub(self, other: Self) -> Self {
-        Self(self.0.zip(other.0).map(|(r1, r2)| r1.zip(r2).map(|(c1, c2)| c1 - c2)))
-    }
-}
-
-impl<const ROWS: usize, const COLS: usize, K: Field> Mul for &Matrix<ROWS, COLS, K> {
-    type Output = Self;
-
-    fn mul(self, other: Self) -> Self {
-        Self(self.0.zip(other.0).map(|(r1, r2)| r1.zip(r2).map(|(c1, c2)| c1 * c2)))
-    }
-}
-
-impl<const ROWS: usize, const COLS: usize, K: Field> Div for &Matrix<ROWS, COLS, K> {
     type Output = Self;
     
     fn div(self, other: Self) -> Self {
