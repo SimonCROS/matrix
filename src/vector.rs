@@ -1,19 +1,30 @@
 use super::Field;
 use super::Matrix;
-use std::ops::{Deref, DerefMut};
+use std::fmt::{self, Debug, Display, Formatter};
+use std::ops::{Add, AddAssign, Deref, DerefMut, Sub, SubAssign};
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, Debug)]
 pub struct Vector<const SIZE: usize, K: Field>(pub(super) Matrix<SIZE, 1, K>);
 
 impl<const SIZE: usize, K: Field> Vector<SIZE, K> {
     pub fn size(&self) -> usize {
         SIZE
     }
+
+    pub fn scl_assign(&mut self, _other: f32) {
+        unimplemented!()
+    }
 }
 
 impl<const SIZE: usize, K: Field> From<[K; SIZE]> for Vector<SIZE, K> {
     fn from(content: [K; SIZE]) -> Self {
         Self(content.map(|x| [x]).into())
+    }
+}
+
+impl<const SIZE: usize, K: Field> From<Matrix<SIZE, 1, K>> for Vector<SIZE, K> {
+    fn from(content: Matrix<SIZE, 1, K>) -> Self {
+        Self(content)
     }
 }
 
@@ -30,19 +41,36 @@ impl<const SIZE: usize, K: Field> DerefMut for Vector<SIZE, K> {
     }
 }
 
-#[cfg(test)]
-mod basic {
-    use super::Vector;
-
-    #[test]
-    fn size() {
-        let vector = Vector::<4, i32>::default();
-        assert_eq!(vector.size(), 4);
+impl<const SIZE: usize, K: Field + Display + Debug> Display for Vector<SIZE, K> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        Display::fmt(&self.0, f)
     }
+}
 
-    #[test]
-    fn simple_values() {
-        let vector = Vector::from([1, 2, 3]);
-        assert_eq!(vector.to_string(), "|    1    |\n|    2    |\n|    3    |\n");
+impl<const SIZE: usize, K: Field> Add for Vector<SIZE, K> {
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        Vector::from(self.0 + other.0)
+    }
+}
+
+impl<const SIZE: usize, K: Field> Sub for Vector<SIZE, K> {
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self {
+        Vector::from(self.0 - other.0)
+    }
+}
+
+impl<const SIZE: usize, K: Field> AddAssign for Vector<SIZE, K> {
+    fn add_assign(&mut self, rhs: Self) {
+        self.0 += rhs.0
+    }
+}
+
+impl<const SIZE: usize, K: Field> SubAssign for Vector<SIZE, K> {
+    fn sub_assign(&mut self, rhs: Self) {
+        self.0 -= rhs.0
     }
 }

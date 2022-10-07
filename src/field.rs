@@ -1,3 +1,3 @@
-use std::ops::{Add, Div, Mul, Sub};
+use std::ops::{Add, Sub};
 
-pub trait Field = Add<Output = Self> + Sub<Output = Self> + Mul<Output = Self> + Div<Output = Self> + Clone + Sized;
+pub trait Field = Add<Output = Self> + Sub<Output = Self> + Clone + Sized;
