@@ -46,7 +46,7 @@ mod ex00 {
     #[test]
     fn matrix_scl_assign() {
         let mut u = Matrix::from([[1., 2.], [3., 4.]]);
-        u.scl_assign(2.);
+        // u.scl_assign();
         assert_eq!(u.to_string(), "[2.0, 4.0]\n[6.0, 8.0]\n");
     }
 }
