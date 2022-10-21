@@ -1,76 +1,85 @@
-use super::Field;
-use super::Matrix;
-use std::fmt::{self, Debug, Display, Formatter};
-use std::ops::{Add, AddAssign, Deref, DerefMut, Sub, SubAssign};
+use crate::field::Dot;
 
-#[derive(Clone, Default, Debug)]
-pub struct Vector<const SIZE: usize, K: Field>(pub(super) Matrix<SIZE, 1, K>);
+use super::Field;
+use std::fmt::{self, Debug, Display, Formatter};
+use std::ops::{Add, AddAssign, Sub, SubAssign};
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Vector<const SIZE: usize, K: Field>(pub(super) [K; SIZE]);
 
 impl<const SIZE: usize, K: Field> Vector<SIZE, K> {
     pub fn size(&self) -> usize {
         SIZE
     }
+}
 
-    pub fn scl_assign(&mut self, _other: f32) {
-        unimplemented!()
+impl<const SIZE: usize, K: Field + Default> Default for Vector<SIZE, K> {
+    fn default() -> Self {
+        Self([(); SIZE].map(|_| K::default()))
     }
 }
 
 impl<const SIZE: usize, K: Field> From<[K; SIZE]> for Vector<SIZE, K> {
     fn from(content: [K; SIZE]) -> Self {
-        Self(content.map(|x| [x]).into())
-    }
-}
-
-impl<const SIZE: usize, K: Field> From<Matrix<SIZE, 1, K>> for Vector<SIZE, K> {
-    fn from(content: Matrix<SIZE, 1, K>) -> Self {
         Self(content)
-    }
-}
-
-impl<const SIZE: usize, K: Field> Deref for Vector<SIZE, K> {
-    type Target = Matrix<SIZE, 1, K>;
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl<const SIZE: usize, K: Field> DerefMut for Vector<SIZE, K> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
     }
 }
 
 impl<const SIZE: usize, K: Field + Display + Debug> Display for Vector<SIZE, K> {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        Display::fmt(&self.0, f)
+        write!(f, "{:?}", self.0)?;
+        Ok(())
     }
 }
 
 impl<const SIZE: usize, K: Field> Add for Vector<SIZE, K> {
     type Output = Self;
 
-    fn add(self, other: Self) -> Self {
-        Vector::from(self.0 + other.0)
+    fn add(self, other: Self) -> Self::Output {
+        let mut result = self.clone();
+        result += other;
+        result
     }
 }
 
 impl<const SIZE: usize, K: Field> Sub for Vector<SIZE, K> {
     type Output = Self;
 
-    fn sub(self, other: Self) -> Self {
-        Vector::from(self.0 - other.0)
+    fn sub(self, other: Self) -> Self::Output {
+        let mut result = self.clone();
+        result -= other;
+        result
+    }
+}
+
+impl<const SIZE: usize, K: Field + Default> Dot for Vector<SIZE, K> {
+    type Output = K;
+
+    fn dot(self, other: Self) -> Self::Output {
+        self.0.into_iter().zip(other.0).fold(K::default(), |acc, (v1, v2)| acc + (v1 * v2))
+    }
+}
+
+impl<const SIZE: usize, K: Field + Default> Dot for &Vector<SIZE, K> {
+    type Output = K;
+
+    fn dot(self, other: Self) -> Self::Output {
+        self.0.iter().zip(other.0.iter()).fold(K::default(), |acc, (v1, v2)| acc + (*v1 * *v2))
     }
 }
 
 impl<const SIZE: usize, K: Field> AddAssign for Vector<SIZE, K> {
-    fn add_assign(&mut self, rhs: Self) {
-        self.0 += rhs.0
+    fn add_assign(&mut self, other: Self) {
+        for cell in self.0.iter_mut().zip(other.0.into_iter()) {
+            *cell.0 += cell.1;
+        }
     }
 }
 
 impl<const SIZE: usize, K: Field> SubAssign for Vector<SIZE, K> {
-    fn sub_assign(&mut self, rhs: Self) {
-        self.0 -= rhs.0
+    fn sub_assign(&mut self, other: Self) {
+        for cell in self.0.iter_mut().zip(other.0.into_iter()) {
+            *cell.0 -= cell.1;
+        }
     }
 }
