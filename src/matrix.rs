@@ -1,7 +1,7 @@
 use super::vector::Vector;
-use crate::field::{Dot, Field, Scl, SclAssign, Transpose};
+use crate::field::{Field, Transpose};
 use std::fmt::{self, Debug, Display, Formatter};
-use std::ops::{Add, AddAssign, Mul, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Sub, SubAssign};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Matrix<const ROWS: usize, const COLS: usize, K: Field>([Vector<COLS, K>; ROWS]);
@@ -22,7 +22,7 @@ impl<const ROWS: usize, const COLS: usize, K: Field> From<[[K; COLS]; ROWS]>
     for Matrix<ROWS, COLS, K>
 {
     fn from(content: [[K; COLS]; ROWS]) -> Self {
-        Self(content.map(|row| Vector(row)))
+        Self(content.map(|row| Vector::from(row)))
     }
 }
 
@@ -37,7 +37,7 @@ impl<const ROWS: usize, const COLS: usize, K: Field + Display + Debug> Display
 {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         for line in &self.0 {
-            writeln!(f, "{}", line);
+            writeln!(f, "{}", line)?;
         }
         Ok(())
     }
@@ -99,17 +99,17 @@ impl<const ROWS: usize, const COLS: usize, K: Field> Sub for Matrix<ROWS, COLS, 
     }
 }
 
-impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K: Field + Default>
-    Mul<Matrix<COLS, OCOLS, K>> for Matrix<ROWS, COLS, K>
-{
-    type Output = Matrix<ROWS, OCOLS, K>;
+// impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K: Field + Default>
+//     Mul<Matrix<COLS, OCOLS, K>> for Matrix<ROWS, COLS, K>
+// {
+//     type Output = Matrix<ROWS, OCOLS, K>;
 
-    fn mul(self, other: Matrix<COLS, OCOLS, K>) -> Self::Output {
-        let other = other.transpose();
+//     fn mul(self, other: Matrix<COLS, OCOLS, K>) -> Self::Output {
+//         let other = other.transpose();
 
-        // Matrix<ROWS, OCOLS, K>()
-    }
-}
+//         // Matrix<ROWS, OCOLS, K>()
+//     }
+// }
 
 impl<const ROWS: usize, const COLS: usize, K: Field> AddAssign for Matrix<ROWS, COLS, K> {
     fn add_assign(&mut self, other: Self) {

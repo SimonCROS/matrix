@@ -1,6 +1,5 @@
 use crate::field::Dot;
-
-use super::Field;
+use crate::field::Field;
 use std::fmt::{self, Debug, Display, Formatter};
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 
@@ -13,15 +12,15 @@ impl<const SIZE: usize, K: Field> Vector<SIZE, K> {
     }
 }
 
-impl<const SIZE: usize, K: Field + Default> Default for Vector<SIZE, K> {
-    fn default() -> Self {
-        Self([(); SIZE].map(|_| K::default()))
-    }
-}
-
 impl<const SIZE: usize, K: Field> From<[K; SIZE]> for Vector<SIZE, K> {
     fn from(content: [K; SIZE]) -> Self {
         Self(content)
+    }
+}
+
+impl<const SIZE: usize, K: Field + Default> Default for Vector<SIZE, K> {
+    fn default() -> Self {
+        Self([(); SIZE].map(|_| K::default()))
     }
 }
 
@@ -56,7 +55,10 @@ impl<const SIZE: usize, K: Field + Default> Dot for Vector<SIZE, K> {
     type Output = K;
 
     fn dot(self, other: Self) -> Self::Output {
-        self.0.into_iter().zip(other.0).fold(K::default(), |acc, (v1, v2)| acc + (v1 * v2))
+        self.0
+            .into_iter()
+            .zip(other.0)
+            .fold(K::default(), |acc, (v1, v2)| acc + (v1 * v2))
     }
 }
 
@@ -64,7 +66,10 @@ impl<const SIZE: usize, K: Field + Default> Dot for &Vector<SIZE, K> {
     type Output = K;
 
     fn dot(self, other: Self) -> Self::Output {
-        self.0.iter().zip(other.0.iter()).fold(K::default(), |acc, (v1, v2)| acc + (*v1 * *v2))
+        self.0
+            .iter()
+            .zip(other.0.iter())
+            .fold(K::default(), |acc, (v1, v2)| acc + (*v1 * *v2))
     }
 }
 
