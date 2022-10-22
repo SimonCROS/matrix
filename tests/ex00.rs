@@ -2,13 +2,12 @@
 mod ex00 {
     use matrix::matrix::Matrix;
     use matrix::vector::Vector;
-    use std::ops::{AddAssign, SubAssign};
 
     #[test]
     fn vector_add_assign() {
         let mut u = Vector::from([2., 3.]);
         let v = Vector::from([5., 7.]);
-        u.add_assign(v);
+        u += v;
         assert_eq!(u.to_string(), "[7.0, 10.0]");
     }
 
@@ -16,7 +15,7 @@ mod ex00 {
     fn vector_sub_assign() {
         let mut u = Vector::from([2., 3.]);
         let v = Vector::from([5., 7.]);
-        u.sub_assign(v);
+        u -= v;
         assert_eq!(u.to_string(), "[-3.0, -4.0]");
     }
 
@@ -32,7 +31,7 @@ mod ex00 {
     fn matrix_add_assign() {
         let mut u = Matrix::from([[1., 2.], [3., 4.]]);
         let v = Matrix::from([[7., 4.], [-2., 2.]]);
-        u.add_assign(v);
+        u += v;
         assert_eq!(u.to_string(), "[8.0, 6.0]\n[1.0, 6.0]\n");
     }
 
@@ -40,7 +39,7 @@ mod ex00 {
     fn matrix_sub_assign() {
         let mut u = Matrix::from([[1., 2.], [3., 4.]]);
         let v = Matrix::from([[7., 4.], [-2., 2.]]);
-        u.sub_assign(v);
+        u -= v;
         assert_eq!(u.to_string(), "[-6.0, -2.0]\n[5.0, 2.0]\n");
     }
 
