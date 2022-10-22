@@ -1,5 +1,4 @@
-use crate::field::Dot;
-use crate::field::Field;
+use crate::field::{Dot, Field, SclAssign, Scl};
 use std::fmt::{self, Debug, Display, Formatter};
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 
@@ -51,6 +50,16 @@ impl<const SIZE: usize, K: Field> Sub for Vector<SIZE, K> {
     }
 }
 
+impl<const SIZE: usize, K: Field> Scl<K> for Vector<SIZE, K> {
+    type Output = Self;
+
+    fn scl(self, other: K) -> Self::Output {
+        let mut result = self.clone();
+        result.scl_assign(other);
+        result
+    }
+}
+
 impl<const SIZE: usize, K: Field + Default> Dot for Vector<SIZE, K> {
     type Output = K;
 
@@ -85,6 +94,14 @@ impl<const SIZE: usize, K: Field> SubAssign for Vector<SIZE, K> {
     fn sub_assign(&mut self, other: Self) {
         for cell in self.0.iter_mut().zip(other.0.into_iter()) {
             *cell.0 -= cell.1;
+        }
+    }
+}
+
+impl<const SIZE: usize, K: Field> SclAssign<K> for Vector<SIZE, K> {
+    fn scl_assign(&mut self, other: K) {
+        for cell in &mut self.0 {
+            *cell *= other;
         }
     }
 }

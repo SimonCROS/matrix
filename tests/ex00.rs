@@ -1,5 +1,6 @@
 #[cfg(test)]
 mod ex00 {
+    use matrix::field::SclAssign;
     use matrix::matrix::Matrix;
     use matrix::vector::Vector;
 
@@ -19,12 +20,11 @@ mod ex00 {
         assert_eq!(u.to_string(), "[-3.0, -4.0]");
     }
 
-    #[ignore]
     #[test]
     fn vector_scl_assign() {
-        // let mut u = Vector::from([2., 3.]);
-        // u.scl_assign(2.);
-        // assert_eq!(u.to_string(), "[4.0, 6.0]");
+        let mut u = Vector::from([2., 3.]);
+        u.scl_assign(2.);
+        assert_eq!(u.to_string(), "[4.0, 6.0]");
     }
 
     #[test]
@@ -43,11 +43,10 @@ mod ex00 {
         assert_eq!(u.to_string(), "[-6.0, -2.0]\n[5.0, 2.0]\n");
     }
 
-    #[ignore]
     #[test]
     fn matrix_scl_assign() {
-        // let mut u = Matrix::from([[1., 2.], [3., 4.]]);
-        // u.scl_assign();
-        // assert_eq!(u.to_string(), "[2.0, 4.0]\n[6.0, 8.0]\n");
+        let mut u = Matrix::from([[1., 2.], [3., 4.]]);
+        u.scl_assign(2.);
+        assert_eq!(u.to_string(), "[2.0, 4.0]\n[6.0, 8.0]\n");
     }
 }

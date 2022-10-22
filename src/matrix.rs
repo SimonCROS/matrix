@@ -1,5 +1,5 @@
 use super::vector::Vector;
-use crate::field::{Field, Transpose, Dot};
+use crate::field::{Field, Transpose, Dot, SclAssign};
 use std::fmt::{self, Debug, Display, Formatter};
 use std::ops::{Add, AddAssign, Sub, SubAssign, Mul};
 
@@ -23,6 +23,12 @@ impl<const ROWS: usize, const COLS: usize, K: Field> From<[[K; COLS]; ROWS]>
 {
     fn from(content: [[K; COLS]; ROWS]) -> Self {
         Self(content.map(|row| Vector::from(row)))
+    }
+}
+
+impl<const SIZE: usize, K: Field> From<Vector<SIZE, K>> for Matrix<1, SIZE, K> {
+    fn from(v: Vector<SIZE, K>) -> Self {
+        Self([v])
     }
 }
 
@@ -201,8 +207,12 @@ impl<const ROWS: usize, const COLS: usize, K: Field> SubAssign for Matrix<ROWS, 
     }
 }
 
-impl<const SIZE: usize, K: Field> From<Vector<SIZE, K>> for Matrix<1, SIZE, K> {
-    fn from(v: Vector<SIZE, K>) -> Self {
-        Self([v])
+impl<const ROWS: usize, const COLS: usize, K: Field + Default>
+    SclAssign<K> for Matrix<ROWS, COLS, K>
+{
+    fn scl_assign(&mut self, other: K) {
+        for line in &mut self.0 {
+            line.scl_assign(other);
+        }
     }
 }
