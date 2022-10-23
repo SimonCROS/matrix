@@ -127,11 +127,11 @@ impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K: Field + Defaul
 }
 
 impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K: Field + Default>
-    Mul<Matrix<COLS, OCOLS, K>> for &Matrix<ROWS, COLS, K>
+    Mul<&Matrix<COLS, OCOLS, K>> for Matrix<ROWS, COLS, K>
 {
     type Output = Matrix<ROWS, OCOLS, K>;
 
-    fn mul(self, other: Matrix<COLS, OCOLS, K>) -> Self::Output {
+    fn mul(self, other: &Matrix<COLS, OCOLS, K>) -> Self::Output {
         let other = other.transpose();
         let mut i = 0;
 
@@ -148,11 +148,11 @@ impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K: Field + Defaul
 }
 
 impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K: Field + Default>
-    Mul<&Matrix<COLS, OCOLS, K>> for Matrix<ROWS, COLS, K>
+    Mul<Matrix<COLS, OCOLS, K>> for &Matrix<ROWS, COLS, K>
 {
     type Output = Matrix<ROWS, OCOLS, K>;
 
-    fn mul(self, other: &Matrix<COLS, OCOLS, K>) -> Self::Output {
+    fn mul(self, other: Matrix<COLS, OCOLS, K>) -> Self::Output {
         let other = other.transpose();
         let mut i = 0;
 
