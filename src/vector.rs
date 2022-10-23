@@ -90,8 +90,25 @@ impl<const SIZE: usize, K: Field> AddAssign for Vector<SIZE, K> {
     }
 }
 
+impl<const SIZE: usize, K: Field> AddAssign<&Vector<SIZE, K>> for Vector<SIZE, K> {
+
+    fn add_assign(&mut self, other: &Vector<SIZE, K>) {
+        for cell in self.0.iter_mut().zip(other.0.into_iter()) {
+            *cell.0 += cell.1;
+        }
+    }
+}
+
 impl<const SIZE: usize, K: Field> SubAssign for Vector<SIZE, K> {
     fn sub_assign(&mut self, other: Self) {
+        for cell in self.0.iter_mut().zip(other.0.into_iter()) {
+            *cell.0 -= cell.1;
+        }
+    }
+}
+
+impl<const SIZE: usize, K: Field> SubAssign<&Vector<SIZE, K>> for Vector<SIZE, K> {
+    fn sub_assign(&mut self, other: &Vector<SIZE, K>) {
         for cell in self.0.iter_mut().zip(other.0.into_iter()) {
             *cell.0 -= cell.1;
         }
@@ -102,6 +119,14 @@ impl<const SIZE: usize, K: Field> SclAssign<K> for Vector<SIZE, K> {
     fn scl_assign(&mut self, other: K) {
         for cell in &mut self.0 {
             *cell *= other;
+        }
+    }
+}
+
+impl<const SIZE: usize, K: Field> SclAssign<&K> for Vector<SIZE, K> {
+    fn scl_assign(&mut self, other: &K) {
+        for cell in &mut self.0 {
+            *cell *= *other;
         }
     }
 }
