@@ -22,7 +22,7 @@ impl<const ROWS: usize, const COLS: usize, K: Field> From<[[K; COLS]; ROWS]>
     for Matrix<ROWS, COLS, K>
 {
     fn from(content: [[K; COLS]; ROWS]) -> Self {
-        Self(content.map(|row| Vector::from(row)))
+        Self(content.map(Vector::from))
     }
 }
 
@@ -89,7 +89,7 @@ impl<const ROWS: usize, const COLS: usize, K: Field> Add for Matrix<ROWS, COLS, 
     type Output = Self;
 
     fn add(self, other: Self) -> Self::Output {
-        let mut result = self.clone();
+        let mut result = self;
         result += other;
         result
     }
@@ -99,8 +99,8 @@ impl<const ROWS: usize, const COLS: usize, K: Field> Sub for Matrix<ROWS, COLS, 
     type Output = Self;
 
     fn sub(self, other: Self) -> Self::Output {
-        let mut result = self.clone();
-        result += other;
+        let mut result = self;
+        result -= other;
         result
     }
 }

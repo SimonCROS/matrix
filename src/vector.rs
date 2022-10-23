@@ -34,7 +34,7 @@ impl<const SIZE: usize, K: Field> Add for Vector<SIZE, K> {
     type Output = Self;
 
     fn add(self, other: Self) -> Self::Output {
-        let mut result = self.clone();
+        let mut result = self;
         result += other;
         result
     }
@@ -44,7 +44,7 @@ impl<const SIZE: usize, K: Field> Sub for Vector<SIZE, K> {
     type Output = Self;
 
     fn sub(self, other: Self) -> Self::Output {
-        let mut result = self.clone();
+        let mut result = self;
         result -= other;
         result
     }
@@ -54,7 +54,7 @@ impl<const SIZE: usize, K: Field> Scl<K> for Vector<SIZE, K> {
     type Output = Self;
 
     fn scl(self, other: K) -> Self::Output {
-        let mut result = self.clone();
+        let mut result = self;
         result.scl_assign(other);
         result
     }
