@@ -1,12 +1,17 @@
 use super::vector::Vector;
-use crate::field::{Field, Transpose, Dot, SclAssign};
+use crate::field::{Dot, Field, SclAssign, Transpose};
 use std::fmt::{self, Debug, Display, Formatter};
-use std::ops::{Add, AddAssign, Sub, SubAssign, Mul};
+use std::ops::{Add, AddAssign, Mul, Sub, SubAssign};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub struct Matrix<const ROWS: usize, const COLS: usize, K: Field>([Vector<COLS, K>; ROWS]);
+pub struct Matrix<const ROWS: usize, const COLS: usize, K>([Vector<COLS, K>; ROWS])
+where
+    K: Field;
 
-impl<const ROWS: usize, const COLS: usize, K: Field> Matrix<ROWS, COLS, K> {
+impl<const ROWS: usize, const COLS: usize, K> Matrix<ROWS, COLS, K>
+where
+    K: Field,
+{
     /// Returns the size of the matrix in a tuple
     /// (rows: usize, cols: usize)
     pub fn size(&self) -> (usize, usize) {
@@ -18,28 +23,36 @@ impl<const ROWS: usize, const COLS: usize, K: Field> Matrix<ROWS, COLS, K> {
     }
 }
 
-impl<const ROWS: usize, const COLS: usize, K: Field> From<[[K; COLS]; ROWS]>
-    for Matrix<ROWS, COLS, K>
+impl<const ROWS: usize, const COLS: usize, K> From<[[K; COLS]; ROWS]> for Matrix<ROWS, COLS, K>
+where
+    K: Field,
 {
     fn from(content: [[K; COLS]; ROWS]) -> Self {
         Self(content.map(Vector::from))
     }
 }
 
-impl<const SIZE: usize, K: Field> From<Vector<SIZE, K>> for Matrix<1, SIZE, K> {
+impl<const SIZE: usize, K> From<Vector<SIZE, K>> for Matrix<1, SIZE, K>
+where
+    K: Field,
+{
     fn from(v: Vector<SIZE, K>) -> Self {
         Self([v])
     }
 }
 
-impl<const ROWS: usize, const COLS: usize, K: Field + Default> Default for Matrix<ROWS, COLS, K> {
+impl<const ROWS: usize, const COLS: usize, K> Default for Matrix<ROWS, COLS, K>
+where
+    K: Field + Default,
+{
     fn default() -> Self {
         Self([(); ROWS].map(|_| Vector::default()))
     }
 }
 
-impl<const ROWS: usize, const COLS: usize, K: Field + Display + Debug> Display
-    for Matrix<ROWS, COLS, K>
+impl<const ROWS: usize, const COLS: usize, K> Display for Matrix<ROWS, COLS, K>
+where
+    K: Field + Display + Debug,
 {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         for line in &self.0 {
@@ -49,7 +62,10 @@ impl<const ROWS: usize, const COLS: usize, K: Field + Display + Debug> Display
     }
 }
 
-impl<const ROWS: usize, const COLS: usize, K: Field> Transpose for Matrix<ROWS, COLS, K> {
+impl<const ROWS: usize, const COLS: usize, K> Transpose for Matrix<ROWS, COLS, K>
+where
+    K: Field,
+{
     type Output = Matrix<COLS, ROWS, K>;
 
     fn transpose(self) -> Self::Output {
@@ -67,7 +83,10 @@ impl<const ROWS: usize, const COLS: usize, K: Field> Transpose for Matrix<ROWS, 
     }
 }
 
-impl<const ROWS: usize, const COLS: usize, K: Field> Transpose for &Matrix<ROWS, COLS, K> {
+impl<const ROWS: usize, const COLS: usize, K> Transpose for &Matrix<ROWS, COLS, K>
+where
+    K: Field,
+{
     type Output = Matrix<COLS, ROWS, K>;
 
     fn transpose(self) -> Self::Output {
@@ -85,28 +104,114 @@ impl<const ROWS: usize, const COLS: usize, K: Field> Transpose for &Matrix<ROWS,
     }
 }
 
-impl<const ROWS: usize, const COLS: usize, K: Field> Add for Matrix<ROWS, COLS, K> {
-    type Output = Self;
+impl<const ROWS: usize, const COLS: usize, K> Add<Matrix<ROWS, COLS, K>> for Matrix<ROWS, COLS, K>
+where
+    K: Field,
+{
+    type Output = Matrix<ROWS, COLS, K>;
 
-    fn add(self, other: Self) -> Self::Output {
+    fn add(self, other: Matrix<ROWS, COLS, K>) -> Self::Output {
         let mut result = self;
         result += other;
         result
     }
 }
 
-impl<const ROWS: usize, const COLS: usize, K: Field> Sub for Matrix<ROWS, COLS, K> {
-    type Output = Self;
+impl<const ROWS: usize, const COLS: usize, K> Add<&Matrix<ROWS, COLS, K>> for Matrix<ROWS, COLS, K>
+where
+    K: Field,
+{
+    type Output = Matrix<ROWS, COLS, K>;
 
-    fn sub(self, other: Self) -> Self::Output {
+    fn add(self, other: &Matrix<ROWS, COLS, K>) -> Self::Output {
+        let mut result = self;
+        result += other;
+        result
+    }
+}
+
+impl<const ROWS: usize, const COLS: usize, K> Add<Matrix<ROWS, COLS, K>> for &Matrix<ROWS, COLS, K>
+where
+    K: Field,
+{
+    type Output = Matrix<ROWS, COLS, K>;
+
+    fn add(self, other: Matrix<ROWS, COLS, K>) -> Self::Output {
+        let mut result = self.clone();
+        result += other;
+        result
+    }
+}
+
+impl<const ROWS: usize, const COLS: usize, K> Add<&Matrix<ROWS, COLS, K>> for &Matrix<ROWS, COLS, K>
+where
+    K: Field,
+{
+    type Output = Matrix<ROWS, COLS, K>;
+
+    fn add(self, other: &Matrix<ROWS, COLS, K>) -> Self::Output {
+        let mut result = self.clone();
+        result += other;
+        result
+    }
+}
+
+impl<const ROWS: usize, const COLS: usize, K> Sub<Matrix<ROWS, COLS, K>> for Matrix<ROWS, COLS, K>
+where
+    K: Field,
+{
+    type Output = Matrix<ROWS, COLS, K>;
+
+    fn sub(self, other: Matrix<ROWS, COLS, K>) -> Self::Output {
         let mut result = self;
         result -= other;
         result
     }
 }
 
-impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K: Field + Default>
-    Mul<Matrix<COLS, OCOLS, K>> for Matrix<ROWS, COLS, K>
+impl<const ROWS: usize, const COLS: usize, K> Sub<&Matrix<ROWS, COLS, K>> for Matrix<ROWS, COLS, K>
+where
+    K: Field,
+{
+    type Output = Matrix<ROWS, COLS, K>;
+
+    fn sub(self, other: &Matrix<ROWS, COLS, K>) -> Self::Output {
+        let mut result = self;
+        result -= other;
+        result
+    }
+}
+
+impl<const ROWS: usize, const COLS: usize, K> Sub<Matrix<ROWS, COLS, K>> for &Matrix<ROWS, COLS, K>
+where
+    K: Field,
+{
+    type Output = Matrix<ROWS, COLS, K>;
+
+    fn sub(self, other: Matrix<ROWS, COLS, K>) -> Self::Output {
+        let mut result = self.clone();
+        result -= other;
+        result
+    }
+}
+
+impl<const ROWS: usize, const COLS: usize, K> Sub<&Matrix<ROWS, COLS, K>> for &Matrix<ROWS, COLS, K>
+where
+    K: Field,
+{
+    type Output = Matrix<ROWS, COLS, K>;
+
+    fn sub(self, other: &Matrix<ROWS, COLS, K>) -> Self::Output {
+        let mut result = self.clone();
+        result -= other;
+        result
+    }
+}
+
+impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K> Mul<Matrix<COLS, OCOLS, K>>
+    for Matrix<ROWS, COLS, K>
+where
+    K: Field + Default,
 {
     type Output = Matrix<ROWS, OCOLS, K>;
 
@@ -126,8 +231,10 @@ impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K: Field + Defaul
     }
 }
 
-impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K: Field + Default>
-    Mul<&Matrix<COLS, OCOLS, K>> for Matrix<ROWS, COLS, K>
+impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K> Mul<&Matrix<COLS, OCOLS, K>>
+    for Matrix<ROWS, COLS, K>
+where
+    K: Field + Default,
 {
     type Output = Matrix<ROWS, OCOLS, K>;
 
@@ -147,8 +254,10 @@ impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K: Field + Defaul
     }
 }
 
-impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K: Field + Default>
-    Mul<Matrix<COLS, OCOLS, K>> for &Matrix<ROWS, COLS, K>
+impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K> Mul<Matrix<COLS, OCOLS, K>>
+    for &Matrix<ROWS, COLS, K>
+where
+    K: Field + Default,
 {
     type Output = Matrix<ROWS, OCOLS, K>;
 
@@ -168,8 +277,10 @@ impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K: Field + Defaul
     }
 }
 
-impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K: Field + Default>
-    Mul<&Matrix<COLS, OCOLS, K>> for &Matrix<ROWS, COLS, K>
+impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K> Mul<&Matrix<COLS, OCOLS, K>>
+    for &Matrix<ROWS, COLS, K>
+where
+    K: Field + Default,
 {
     type Output = Matrix<ROWS, OCOLS, K>;
 
@@ -189,28 +300,74 @@ impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K: Field + Defaul
     }
 }
 
-impl<const ROWS: usize, const COLS: usize, K: Field> AddAssign for Matrix<ROWS, COLS, K> {
-    fn add_assign(&mut self, other: Self) {
+impl<const ROWS: usize, const COLS: usize, K> AddAssign<Matrix<ROWS, COLS, K>>
+    for Matrix<ROWS, COLS, K>
+where
+    K: Field,
+{
+    fn add_assign(&mut self, other: Matrix<ROWS, COLS, K>) {
         self.0
             .iter_mut()
-            .zip(other.0.into_iter())
+            .zip(other.0.iter())
             .for_each(|(v1, v2)| *v1 += v2)
     }
 }
 
-impl<const ROWS: usize, const COLS: usize, K: Field> SubAssign for Matrix<ROWS, COLS, K> {
-    fn sub_assign(&mut self, other: Self) {
+impl<const ROWS: usize, const COLS: usize, K> AddAssign<&Matrix<ROWS, COLS, K>>
+    for Matrix<ROWS, COLS, K>
+where
+    K: Field,
+{
+    fn add_assign(&mut self, other: &Matrix<ROWS, COLS, K>) {
         self.0
             .iter_mut()
-            .zip(other.0.into_iter())
+            .zip(other.0.iter())
+            .for_each(|(v1, v2)| *v1 += v2)
+    }
+}
+
+impl<const ROWS: usize, const COLS: usize, K> SubAssign<Matrix<ROWS, COLS, K>>
+    for Matrix<ROWS, COLS, K>
+where
+    K: Field,
+{
+    fn sub_assign(&mut self, other: Matrix<ROWS, COLS, K>) {
+        self.0
+            .iter_mut()
+            .zip(other.0.iter())
             .for_each(|(v1, v2)| *v1 -= v2)
     }
 }
 
-impl<const ROWS: usize, const COLS: usize, K: Field + Default>
-    SclAssign<K> for Matrix<ROWS, COLS, K>
+impl<const ROWS: usize, const COLS: usize, K> SubAssign<&Matrix<ROWS, COLS, K>>
+    for Matrix<ROWS, COLS, K>
+where
+    K: Field,
+{
+    fn sub_assign(&mut self, other: &Matrix<ROWS, COLS, K>) {
+        self.0
+            .iter_mut()
+            .zip(other.0.iter())
+            .for_each(|(v1, v2)| *v1 -= v2)
+    }
+}
+
+impl<const ROWS: usize, const COLS: usize, K> SclAssign<K> for Matrix<ROWS, COLS, K>
+where
+    K: Field + Default,
 {
     fn scl_assign(&mut self, other: K) {
+        for line in &mut self.0 {
+            line.scl_assign(other);
+        }
+    }
+}
+
+impl<const ROWS: usize, const COLS: usize, K> SclAssign<&K> for Matrix<ROWS, COLS, K>
+where
+    K: Field + Default,
+{
+    fn scl_assign(&mut self, other: &K) {
         for line in &mut self.0 {
             line.scl_assign(other);
         }
