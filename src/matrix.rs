@@ -43,7 +43,7 @@ where
 
 impl<const ROWS: usize, const COLS: usize, K> Default for Matrix<ROWS, COLS, K>
 where
-    K: Field + Default,
+    K: Field,
 {
     fn default() -> Self {
         Self([(); ROWS].map(|_| Vector::default()))
@@ -112,7 +112,7 @@ where
 impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K> Mul<Matrix<COLS, OCOLS, K>>
     for Matrix<ROWS, COLS, K>
 where
-    K: Field + Default,
+    K: Field,
 {
     type Output = Matrix<ROWS, OCOLS, K>;
 
@@ -160,7 +160,7 @@ where
 
 impl<const ROWS: usize, const COLS: usize, K> SclAssign<K> for Matrix<ROWS, COLS, K>
 where
-    K: Field + Default,
+    K: Field,
 {
     fn scl_assign(&mut self, other: K) {
         for line in &mut self.0 {

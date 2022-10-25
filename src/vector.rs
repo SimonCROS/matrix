@@ -13,6 +13,19 @@ where
     pub fn size(&self) -> usize {
         SIZE
     }
+
+    pub fn linear_combination<const LEN: usize>(
+        u: [Vector<SIZE, K>; LEN],
+        coefs: [K; LEN],
+    ) -> Vector<SIZE, K> {
+        let mut iter = u.into_iter().zip(coefs);
+
+        let mut acc = iter.next().map(|i| i.0.scl(i.1)).unwrap_or_default();
+        for i in iter {
+            acc.add_assign(i.0.scl(i.1))
+        }
+        acc
+    }
 }
 
 impl<const SIZE: usize, K> From<[K; SIZE]> for Vector<SIZE, K>
@@ -27,7 +40,7 @@ where
 
 impl<const SIZE: usize, K> Default for Vector<SIZE, K>
 where
-    K: Field + Default,
+    K: Field,
 {
     /// Complexity `O(n)`
     fn default() -> Self {
@@ -90,7 +103,7 @@ where
 
 impl<const SIZE: usize, K> Dot<Vector<SIZE, K>> for Vector<SIZE, K>
 where
-    K: Field + Default,
+    K: Field,
 {
     type Output = K;
 

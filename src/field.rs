@@ -7,7 +7,8 @@ pub trait Field = Add<Output = Self>
     + SubAssign
     + MulAssign
     + Copy
-    + Sized;
+    + Sized
+    + Default;
 
 pub trait Scl<Rhs = Self> {
     type Output;
