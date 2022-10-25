@@ -2,7 +2,7 @@ use crate::field::{Dot, Field, Scl, SclAssign};
 use std::fmt::{self, Debug, Display, Formatter};
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct Vector<const SIZE: usize, K>(pub(super) [K; SIZE]);
 
 impl<const SIZE: usize, K> Vector<SIZE, K>
@@ -60,48 +60,6 @@ where
     }
 }
 
-impl<const SIZE: usize, K> Add<&Vector<SIZE, K>> for Vector<SIZE, K>
-where
-    K: Field,
-{
-    type Output = Vector<SIZE, K>;
-
-    /// Complexity `O(n)`
-    fn add(self, other: &Vector<SIZE, K>) -> Self::Output {
-        let mut result = self;
-        result += other;
-        result
-    }
-}
-
-impl<const SIZE: usize, K> Add<Vector<SIZE, K>> for &Vector<SIZE, K>
-where
-    K: Field,
-{
-    type Output = Vector<SIZE, K>;
-
-    /// Complexity `O(n)`
-    fn add(self, other: Vector<SIZE, K>) -> Self::Output {
-        let mut result = self.clone();
-        result += other;
-        result
-    }
-}
-
-impl<const SIZE: usize, K> Add<&Vector<SIZE, K>> for &Vector<SIZE, K>
-where
-    K: Field,
-{
-    type Output = Vector<SIZE, K>;
-
-    /// Complexity `O(n)`
-    fn add(self, other: &Vector<SIZE, K>) -> Self::Output {
-        let mut result = self.clone();
-        result += other;
-        result
-    }
-}
-
 impl<const SIZE: usize, K> Sub<Vector<SIZE, K>> for Vector<SIZE, K>
 where
     K: Field,
@@ -116,48 +74,6 @@ where
     }
 }
 
-impl<const SIZE: usize, K> Sub<&Vector<SIZE, K>> for Vector<SIZE, K>
-where
-    K: Field,
-{
-    type Output = Vector<SIZE, K>;
-
-    /// Complexity `O(n)`
-    fn sub(self, other: &Vector<SIZE, K>) -> Self::Output {
-        let mut result = self;
-        result -= other;
-        result
-    }
-}
-
-impl<const SIZE: usize, K> Sub<Vector<SIZE, K>> for &Vector<SIZE, K>
-where
-    K: Field,
-{
-    type Output = Vector<SIZE, K>;
-
-    /// Complexity `O(n)`
-    fn sub(self, other: Vector<SIZE, K>) -> Self::Output {
-        let mut result = self.clone();
-        result -= other;
-        result
-    }
-}
-
-impl<const SIZE: usize, K> Sub<&Vector<SIZE, K>> for &Vector<SIZE, K>
-where
-    K: Field,
-{
-    type Output = Vector<SIZE, K>;
-
-    /// Complexity `O(n)`
-    fn sub(self, other: &Vector<SIZE, K>) -> Self::Output {
-        let mut result = self.clone();
-        result -= other;
-        result
-    }
-}
-
 impl<const SIZE: usize, K> Scl<K> for Vector<SIZE, K>
 where
     K: Field,
@@ -167,48 +83,6 @@ where
     /// Complexity `O(n)`
     fn scl(self, other: K) -> Self::Output {
         let mut result = self;
-        result.scl_assign(other);
-        result
-    }
-}
-
-impl<const SIZE: usize, K> Scl<&K> for Vector<SIZE, K>
-where
-    K: Field,
-{
-    type Output = Vector<SIZE, K>;
-
-    /// Complexity `O(n)`
-    fn scl(self, other: &K) -> Self::Output {
-        let mut result = self;
-        result.scl_assign(other);
-        result
-    }
-}
-
-impl<const SIZE: usize, K> Scl<K> for &Vector<SIZE, K>
-where
-    K: Field,
-{
-    type Output = Vector<SIZE, K>;
-
-    /// Complexity `O(n)`
-    fn scl(self, other: K) -> Self::Output {
-        let mut result = self.clone();
-        result.scl_assign(other);
-        result
-    }
-}
-
-impl<const SIZE: usize, K> Scl<&K> for &Vector<SIZE, K>
-where
-    K: Field,
-{
-    type Output = Vector<SIZE, K>;
-
-    /// Complexity `O(n)`
-    fn scl(self, other: &K) -> Self::Output {
-        let mut result = self.clone();
         result.scl_assign(other);
         result
     }
@@ -229,71 +103,14 @@ where
     }
 }
 
-impl<const SIZE: usize, K> Dot<&Vector<SIZE, K>> for Vector<SIZE, K>
-where
-    K: Field + Default,
-{
-    type Output = K;
-
-    /// Complexity: `O(n)`
-    fn dot(self, other: &Vector<SIZE, K>) -> Self::Output {
-        self.0
-            .iter()
-            .zip(other.0.iter())
-            .fold(K::default(), |acc, (v1, v2)| acc + (*v1 * *v2))
-    }
-}
-
-impl<const SIZE: usize, K> Dot<Vector<SIZE, K>> for &Vector<SIZE, K>
-where
-    K: Field + Default,
-{
-    type Output = K;
-
-    /// Complexity: `O(n)`
-    fn dot(self, other: Vector<SIZE, K>) -> Self::Output {
-        self.0
-            .iter()
-            .zip(other.0.iter())
-            .fold(K::default(), |acc, (v1, v2)| acc + (*v1 * *v2))
-    }
-}
-
-impl<const SIZE: usize, K> Dot<&Vector<SIZE, K>> for &Vector<SIZE, K>
-where
-    K: Field + Default,
-{
-    type Output = K;
-
-    /// Complexity: `O(n)`
-    fn dot(self, other: &Vector<SIZE, K>) -> Self::Output {
-        self.0
-            .iter()
-            .zip(other.0.iter())
-            .fold(K::default(), |acc, (v1, v2)| acc + (*v1 * *v2))
-    }
-}
-
 impl<const SIZE: usize, K> AddAssign<Vector<SIZE, K>> for Vector<SIZE, K>
 where
     K: Field,
 {
     /// Complexity: `O(n)`
     fn add_assign(&mut self, other: Vector<SIZE, K>) {
-        for cell in self.0.iter_mut().zip(other.0.iter()) {
-            *cell.0 += *cell.1;
-        }
-    }
-}
-
-impl<const SIZE: usize, K> AddAssign<&Vector<SIZE, K>> for Vector<SIZE, K>
-where
-    K: Field,
-{
-    /// Complexity: `O(n)`
-    fn add_assign(&mut self, other: &Vector<SIZE, K>) {
-        for cell in self.0.iter_mut().zip(other.0.iter()) {
-            *cell.0 += *cell.1;
+        for cell in self.0.iter_mut().zip(other.0.into_iter()) {
+            *cell.0 += cell.1;
         }
     }
 }
@@ -304,20 +121,8 @@ where
 {
     /// Complexity: `O(n)`
     fn sub_assign(&mut self, other: Vector<SIZE, K>) {
-        for cell in self.0.iter_mut().zip(other.0.iter()) {
-            *cell.0 -= *cell.1;
-        }
-    }
-}
-
-impl<const SIZE: usize, K> SubAssign<&Vector<SIZE, K>> for Vector<SIZE, K>
-where
-    K: Field,
-{
-    /// Complexity: `O(n)`
-    fn sub_assign(&mut self, other: &Vector<SIZE, K>) {
-        for cell in self.0.iter_mut().zip(other.0.iter()) {
-            *cell.0 -= *cell.1;
+        for cell in self.0.iter_mut().zip(other.0.into_iter()) {
+            *cell.0 -= cell.1;
         }
     }
 }
@@ -330,18 +135,6 @@ where
     fn scl_assign(&mut self, other: K) {
         for cell in &mut self.0 {
             *cell *= other;
-        }
-    }
-}
-
-impl<const SIZE: usize, K> SclAssign<&K> for Vector<SIZE, K>
-where
-    K: Field,
-{
-    /// Complexity: `O(n)`
-    fn scl_assign(&mut self, other: &K) {
-        for cell in &mut self.0 {
-            *cell *= *other;
         }
     }
 }

@@ -3,7 +3,7 @@ use crate::field::{Dot, Field, SclAssign, Transpose};
 use std::fmt::{self, Debug, Display, Formatter};
 use std::ops::{Add, AddAssign, Mul, Sub, SubAssign};
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct Matrix<const ROWS: usize, const COLS: usize, K>([Vector<COLS, K>; ROWS])
 where
     K: Field;
@@ -83,27 +83,6 @@ where
     }
 }
 
-impl<const ROWS: usize, const COLS: usize, K> Transpose for &Matrix<ROWS, COLS, K>
-where
-    K: Field,
-{
-    type Output = Matrix<COLS, ROWS, K>;
-
-    fn transpose(self) -> Self::Output {
-        let mut i = 0;
-
-        Matrix::<COLS, ROWS, K>([(); COLS].map(|_| {
-            let mut j = 0;
-
-            i += 1;
-            Vector([(); ROWS].map(|_| {
-                j += 1;
-                self.0[j - 1].0[i - 1]
-            }))
-        }))
-    }
-}
-
 impl<const ROWS: usize, const COLS: usize, K> Add<Matrix<ROWS, COLS, K>> for Matrix<ROWS, COLS, K>
 where
     K: Field,
@@ -112,45 +91,6 @@ where
 
     fn add(self, other: Matrix<ROWS, COLS, K>) -> Self::Output {
         let mut result = self;
-        result += other;
-        result
-    }
-}
-
-impl<const ROWS: usize, const COLS: usize, K> Add<&Matrix<ROWS, COLS, K>> for Matrix<ROWS, COLS, K>
-where
-    K: Field,
-{
-    type Output = Matrix<ROWS, COLS, K>;
-
-    fn add(self, other: &Matrix<ROWS, COLS, K>) -> Self::Output {
-        let mut result = self;
-        result += other;
-        result
-    }
-}
-
-impl<const ROWS: usize, const COLS: usize, K> Add<Matrix<ROWS, COLS, K>> for &Matrix<ROWS, COLS, K>
-where
-    K: Field,
-{
-    type Output = Matrix<ROWS, COLS, K>;
-
-    fn add(self, other: Matrix<ROWS, COLS, K>) -> Self::Output {
-        let mut result = self.clone();
-        result += other;
-        result
-    }
-}
-
-impl<const ROWS: usize, const COLS: usize, K> Add<&Matrix<ROWS, COLS, K>> for &Matrix<ROWS, COLS, K>
-where
-    K: Field,
-{
-    type Output = Matrix<ROWS, COLS, K>;
-
-    fn add(self, other: &Matrix<ROWS, COLS, K>) -> Self::Output {
-        let mut result = self.clone();
         result += other;
         result
     }
@@ -169,45 +109,6 @@ where
     }
 }
 
-impl<const ROWS: usize, const COLS: usize, K> Sub<&Matrix<ROWS, COLS, K>> for Matrix<ROWS, COLS, K>
-where
-    K: Field,
-{
-    type Output = Matrix<ROWS, COLS, K>;
-
-    fn sub(self, other: &Matrix<ROWS, COLS, K>) -> Self::Output {
-        let mut result = self;
-        result -= other;
-        result
-    }
-}
-
-impl<const ROWS: usize, const COLS: usize, K> Sub<Matrix<ROWS, COLS, K>> for &Matrix<ROWS, COLS, K>
-where
-    K: Field,
-{
-    type Output = Matrix<ROWS, COLS, K>;
-
-    fn sub(self, other: Matrix<ROWS, COLS, K>) -> Self::Output {
-        let mut result = self.clone();
-        result -= other;
-        result
-    }
-}
-
-impl<const ROWS: usize, const COLS: usize, K> Sub<&Matrix<ROWS, COLS, K>> for &Matrix<ROWS, COLS, K>
-where
-    K: Field,
-{
-    type Output = Matrix<ROWS, COLS, K>;
-
-    fn sub(self, other: &Matrix<ROWS, COLS, K>) -> Self::Output {
-        let mut result = self.clone();
-        result -= other;
-        result
-    }
-}
-
 impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K> Mul<Matrix<COLS, OCOLS, K>>
     for Matrix<ROWS, COLS, K>
 where
@@ -225,76 +126,7 @@ where
             i += 1;
             Vector([(); OCOLS].map(|_| {
                 j += 1;
-                (&self.0[i - 1]).dot(&other.0[j - 1])
-            }))
-        }))
-    }
-}
-
-impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K> Mul<&Matrix<COLS, OCOLS, K>>
-    for Matrix<ROWS, COLS, K>
-where
-    K: Field + Default,
-{
-    type Output = Matrix<ROWS, OCOLS, K>;
-
-    fn mul(self, other: &Matrix<COLS, OCOLS, K>) -> Self::Output {
-        let other = other.transpose();
-        let mut i = 0;
-
-        Matrix::<ROWS, OCOLS, K>([(); ROWS].map(|_| {
-            let mut j = 0;
-
-            i += 1;
-            Vector([(); OCOLS].map(|_| {
-                j += 1;
-                (&self.0[i - 1]).dot(&other.0[j - 1])
-            }))
-        }))
-    }
-}
-
-impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K> Mul<Matrix<COLS, OCOLS, K>>
-    for &Matrix<ROWS, COLS, K>
-where
-    K: Field + Default,
-{
-    type Output = Matrix<ROWS, OCOLS, K>;
-
-    fn mul(self, other: Matrix<COLS, OCOLS, K>) -> Self::Output {
-        let other = other.transpose();
-        let mut i = 0;
-
-        Matrix::<ROWS, OCOLS, K>([(); ROWS].map(|_| {
-            let mut j = 0;
-
-            i += 1;
-            Vector([(); OCOLS].map(|_| {
-                j += 1;
-                (&self.0[i - 1]).dot(&other.0[j - 1])
-            }))
-        }))
-    }
-}
-
-impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K> Mul<&Matrix<COLS, OCOLS, K>>
-    for &Matrix<ROWS, COLS, K>
-where
-    K: Field + Default,
-{
-    type Output = Matrix<ROWS, OCOLS, K>;
-
-    fn mul(self, other: &Matrix<COLS, OCOLS, K>) -> Self::Output {
-        let other = other.transpose();
-        let mut i = 0;
-
-        Matrix::<ROWS, OCOLS, K>([(); ROWS].map(|_| {
-            let mut j = 0;
-
-            i += 1;
-            Vector([(); OCOLS].map(|_| {
-                j += 1;
-                (&self.0[i - 1]).dot(&other.0[j - 1])
+                self.0[i - 1].dot(other.0[j - 1])
             }))
         }))
     }
@@ -308,20 +140,7 @@ where
     fn add_assign(&mut self, other: Matrix<ROWS, COLS, K>) {
         self.0
             .iter_mut()
-            .zip(other.0.iter())
-            .for_each(|(v1, v2)| *v1 += v2)
-    }
-}
-
-impl<const ROWS: usize, const COLS: usize, K> AddAssign<&Matrix<ROWS, COLS, K>>
-    for Matrix<ROWS, COLS, K>
-where
-    K: Field,
-{
-    fn add_assign(&mut self, other: &Matrix<ROWS, COLS, K>) {
-        self.0
-            .iter_mut()
-            .zip(other.0.iter())
+            .zip(other.0.into_iter())
             .for_each(|(v1, v2)| *v1 += v2)
     }
 }
@@ -334,20 +153,7 @@ where
     fn sub_assign(&mut self, other: Matrix<ROWS, COLS, K>) {
         self.0
             .iter_mut()
-            .zip(other.0.iter())
-            .for_each(|(v1, v2)| *v1 -= v2)
-    }
-}
-
-impl<const ROWS: usize, const COLS: usize, K> SubAssign<&Matrix<ROWS, COLS, K>>
-    for Matrix<ROWS, COLS, K>
-where
-    K: Field,
-{
-    fn sub_assign(&mut self, other: &Matrix<ROWS, COLS, K>) {
-        self.0
-            .iter_mut()
-            .zip(other.0.iter())
+            .zip(other.0.into_iter())
             .for_each(|(v1, v2)| *v1 -= v2)
     }
 }
@@ -357,17 +163,6 @@ where
     K: Field + Default,
 {
     fn scl_assign(&mut self, other: K) {
-        for line in &mut self.0 {
-            line.scl_assign(other);
-        }
-    }
-}
-
-impl<const ROWS: usize, const COLS: usize, K> SclAssign<&K> for Matrix<ROWS, COLS, K>
-where
-    K: Field + Default,
-{
-    fn scl_assign(&mut self, other: &K) {
         for line in &mut self.0 {
             line.scl_assign(other);
         }
