@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod ex03 {
-    use matrix::field::Dot;
+    use matrix::traits::Dot;
     use matrix::vector::Vector;
 
     #[test]

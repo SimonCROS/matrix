@@ -1,5 +1,5 @@
 use super::vector::Vector;
-use crate::field::{Dot, Field, SclAssign, Transpose};
+use crate::traits::{Dot, Field, SclAssign, Transpose};
 use std::fmt::{self, Debug, Display, Formatter};
 use std::ops::{Add, AddAssign, Mul, Sub, SubAssign};
 

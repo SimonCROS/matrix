@@ -1,6 +1,6 @@
-use crate::field::{Dot, Field, Scl, SclAssign};
+use crate::traits::{Dot, Field, Scl, SclAssign};
 use std::fmt::{self, Debug, Display, Formatter};
-use std::ops::{Add, AddAssign, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct Vector<const SIZE: usize, K>(pub(super) [K; SIZE]);
@@ -14,6 +14,7 @@ where
         SIZE
     }
 
+    /// Complexity `O(n)`
     pub fn linear_combination<const LEN: usize>(
         u: [Vector<SIZE, K>; LEN],
         coefs: [K; LEN],
@@ -87,14 +88,37 @@ where
     }
 }
 
-impl<const SIZE: usize, K> Scl<K> for Vector<SIZE, K>
+// impl<const SIZE: usize, K, S> Mul<S> for Vector<SIZE, K>
+// where
+//     K: Field + MulAssign<S>,
+// {
+//     type Output = Matrix<ROWS, OCOLS, K>;
+
+//     fn mul(self, other: Matrix<COLS, OCOLS, K>) -> Self::Output {
+//         let other = other.transpose();
+//         let mut i = 0;
+
+//         Matrix::<ROWS, OCOLS, K>([(); ROWS].map(|_| {
+//             let mut j = 0;
+
+//             i += 1;
+//             Vector([(); OCOLS].map(|_| {
+//                 j += 1;
+//                 self.0[i - 1].dot(other.0[j - 1])
+//             }))
+//         }))
+//     }
+// }
+
+impl<const SIZE: usize, K, S> Scl<S> for Vector<SIZE, K>
 where
-    K: Field,
+    K: Field + MulAssign<S>,
+    S: Field,
 {
     type Output = Vector<SIZE, K>;
 
     /// Complexity `O(n)`
-    fn scl(self, other: K) -> Self::Output {
+    fn scl(self, other: S) -> Self::Output {
         let mut result = self;
         result.scl_assign(other);
         result
@@ -140,12 +164,13 @@ where
     }
 }
 
-impl<const SIZE: usize, K> SclAssign<K> for Vector<SIZE, K>
+impl<const SIZE: usize, K, S> SclAssign<S> for Vector<SIZE, K>
 where
-    K: Field,
+    K: Field + MulAssign<S>,
+    S: Field,
 {
     /// Complexity: `O(n)`
-    fn scl_assign(&mut self, other: K) {
+    fn scl_assign(&mut self, other: S) {
         for cell in &mut self.0 {
             *cell *= other;
         }

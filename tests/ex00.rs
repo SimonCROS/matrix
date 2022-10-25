@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod ex00 {
-    use matrix::field::SclAssign;
+    use matrix::traits::SclAssign;
     use matrix::matrix::Matrix;
     use matrix::vector::Vector;
 

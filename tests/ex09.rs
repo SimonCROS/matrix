@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod ex09 {
-    use matrix::field::Transpose;
+    use matrix::traits::Transpose;
     use matrix::matrix::Matrix;
 
     #[test]

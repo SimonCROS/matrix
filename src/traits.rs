@@ -31,3 +31,9 @@ pub trait Dot<Rhs = Self> {
 
     fn dot(self, rhs: Rhs) -> Self::Output;
 }
+
+pub trait Lerp<Rhs = Self> {
+    type Output;
+
+    fn lerp(self, other: Self, t: f32) -> Self::Output;
+}
