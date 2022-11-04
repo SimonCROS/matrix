@@ -1,7 +1,6 @@
 #[cfg(test)]
 mod ex07 {
-    use matrix::matrix::Matrix;
-    use matrix::traits::Dot;
+    use matrix::{matrix::Matrix, traits::Dot};
 
     #[test]
     fn matrix_mul_2_2() {

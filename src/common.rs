@@ -13,16 +13,3 @@ where
         self.add(other.sub(self).mul(t))
     }
 }
-
-// let other = other.transpose();
-// let mut i = 0;
-
-// Matrix::<ROWS, OCOLS, K>([(); ROWS].map(|_| {
-//     let mut j = 0;
-
-//     i += 1;
-//     Vector([(); OCOLS].map(|_| {
-//         j += 1;
-//         self.0[i - 1].dot(other.0[j - 1])
-//     }))
-// }))

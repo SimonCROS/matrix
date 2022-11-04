@@ -1,5 +1,5 @@
 use super::vector::Vector;
-use crate::traits::{Field, Transpose};
+use crate::traits::{Dot, Field, Transpose};
 use std::fmt::{self, Debug, Display, Formatter};
 use std::ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign};
 
@@ -120,6 +120,29 @@ where
         let mut result = self;
         result *= other;
         result
+    }
+}
+
+impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K> Dot<Matrix<COLS, OCOLS, K>>
+    for Matrix<ROWS, COLS, K>
+where
+    K: Field,
+{
+    type Output = Matrix<ROWS, OCOLS, K>;
+
+    fn dot(self, other: Matrix<COLS, OCOLS, K>) -> Self::Output {
+        let other = other.transpose();
+        let mut i = 0;
+
+        Matrix::<ROWS, OCOLS, K>([(); ROWS].map(|_| {
+            let mut j = 0;
+
+            i += 1;
+            Vector([(); OCOLS].map(|_| {
+                j += 1;
+                self.0[i - 1].dot(other.0[j - 1])
+            }))
+        }))
     }
 }
 

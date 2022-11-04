@@ -1,4 +1,4 @@
-use crate::traits::{Dot, Field, Lerp};
+use crate::traits::{Dot, Field};
 use std::fmt::{self, Debug, Display, Formatter};
 use std::ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign};
 
