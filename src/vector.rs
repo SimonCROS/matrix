@@ -1,4 +1,4 @@
-use crate::traits::{Dot, Field, Scl, SclAssign};
+use crate::traits::{Dot, Field, Lerp};
 use std::fmt::{self, Debug, Display, Formatter};
 use std::ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign};
 
@@ -21,9 +21,9 @@ where
     ) -> Vector<SIZE, K> {
         let mut iter = u.into_iter().zip(coefs);
 
-        let mut acc = iter.next().map(|i| i.0.scl(i.1)).unwrap_or_default();
+        let mut acc = iter.next().map(|i| i.0.mul(i.1)).unwrap_or_default();
         for i in iter {
-            acc.add_assign(i.0.scl(i.1))
+            acc.add_assign(i.0.mul(i.1))
         }
         acc
     }
@@ -88,39 +88,16 @@ where
     }
 }
 
-// impl<const SIZE: usize, K, S> Mul<S> for Vector<SIZE, K>
-// where
-//     K: Field + MulAssign<S>,
-// {
-//     type Output = Matrix<ROWS, OCOLS, K>;
-
-//     fn mul(self, other: Matrix<COLS, OCOLS, K>) -> Self::Output {
-//         let other = other.transpose();
-//         let mut i = 0;
-
-//         Matrix::<ROWS, OCOLS, K>([(); ROWS].map(|_| {
-//             let mut j = 0;
-
-//             i += 1;
-//             Vector([(); OCOLS].map(|_| {
-//                 j += 1;
-//                 self.0[i - 1].dot(other.0[j - 1])
-//             }))
-//         }))
-//     }
-// }
-
-impl<const SIZE: usize, K, S> Scl<S> for Vector<SIZE, K>
+impl<const SIZE: usize, K, S> Mul<S> for Vector<SIZE, K>
 where
     K: Field + MulAssign<S>,
     S: Field,
 {
     type Output = Vector<SIZE, K>;
 
-    /// Complexity `O(n)`
-    fn scl(self, other: S) -> Self::Output {
+    fn mul(self, other: S) -> Self::Output {
         let mut result = self;
-        result.scl_assign(other);
+        result *= other;
         result
     }
 }
@@ -164,13 +141,13 @@ where
     }
 }
 
-impl<const SIZE: usize, K, S> SclAssign<S> for Vector<SIZE, K>
+impl<const SIZE: usize, K, S> MulAssign<S> for Vector<SIZE, K>
 where
     K: Field + MulAssign<S>,
     S: Field,
 {
     /// Complexity: `O(n)`
-    fn scl_assign(&mut self, other: S) {
+    fn mul_assign(&mut self, other: S) {
         for cell in &mut self.0 {
             *cell *= other;
         }

@@ -1,7 +1,7 @@
 use super::vector::Vector;
-use crate::traits::{Dot, Field, SclAssign, Transpose};
+use crate::traits::{Field, Transpose};
 use std::fmt::{self, Debug, Display, Formatter};
-use std::ops::{Add, AddAssign, Mul, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct Matrix<const ROWS: usize, const COLS: usize, K>([Vector<COLS, K>; ROWS])
@@ -109,26 +109,17 @@ where
     }
 }
 
-impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K> Mul<Matrix<COLS, OCOLS, K>>
-    for Matrix<ROWS, COLS, K>
+impl<const ROWS: usize, const COLS: usize, K, S> Mul<S> for Matrix<ROWS, COLS, K>
 where
-    K: Field,
+    K: Field + MulAssign<S>,
+    S: Field,
 {
-    type Output = Matrix<ROWS, OCOLS, K>;
+    type Output = Matrix<ROWS, COLS, K>;
 
-    fn mul(self, other: Matrix<COLS, OCOLS, K>) -> Self::Output {
-        let other = other.transpose();
-        let mut i = 0;
-
-        Matrix::<ROWS, OCOLS, K>([(); ROWS].map(|_| {
-            let mut j = 0;
-
-            i += 1;
-            Vector([(); OCOLS].map(|_| {
-                j += 1;
-                self.0[i - 1].dot(other.0[j - 1])
-            }))
-        }))
+    fn mul(self, other: S) -> Self::Output {
+        let mut result = self;
+        result *= other;
+        result
     }
 }
 
@@ -158,13 +149,14 @@ where
     }
 }
 
-impl<const ROWS: usize, const COLS: usize, K> SclAssign<K> for Matrix<ROWS, COLS, K>
+impl<const ROWS: usize, const COLS: usize, K, S> MulAssign<S> for Matrix<ROWS, COLS, K>
 where
-    K: Field,
+    K: Field + MulAssign<S>,
+    S: Field,
 {
-    fn scl_assign(&mut self, other: K) {
+    fn mul_assign(&mut self, other: S) {
         for line in &mut self.0 {
-            line.scl_assign(other);
+            line.mul_assign(other);
         }
     }
 }

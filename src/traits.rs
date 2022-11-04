@@ -10,16 +10,6 @@ pub trait Field = Add<Output = Self>
     + Sized
     + Default;
 
-pub trait Scl<Rhs = Self> {
-    type Output;
-
-    fn scl(self, rhs: Rhs) -> Self::Output;
-}
-
-pub trait SclAssign<Rhs = Self> {
-    fn scl_assign(&mut self, rhs: Rhs);
-}
-
 pub trait Transpose<Rhs = Self> {
     type Output;
 

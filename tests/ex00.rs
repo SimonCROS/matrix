@@ -1,6 +1,5 @@
 #[cfg(test)]
 mod ex00 {
-    use matrix::traits::SclAssign;
     use matrix::matrix::Matrix;
     use matrix::vector::Vector;
 
@@ -23,7 +22,7 @@ mod ex00 {
     #[test]
     fn vector_scl_assign() {
         let mut u = Vector::from([2, 3]);
-        u.scl_assign(2);
+        u *= 2;
         assert_eq!(u.to_string(), "[4, 6]");
     }
 
@@ -46,7 +45,7 @@ mod ex00 {
     #[test]
     fn matrix_scl_assign() {
         let mut u = Matrix::from([[1, 2], [3, 4]]);
-        u.scl_assign(2);
+        u *= 2;
         assert_eq!(u.to_string(), "[2, 4]\n[6, 8]\n");
     }
 }

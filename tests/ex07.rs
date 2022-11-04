@@ -1,13 +1,14 @@
 #[cfg(test)]
 mod ex07 {
     use matrix::matrix::Matrix;
+    use matrix::traits::Dot;
 
     #[test]
     fn matrix_mul_2_2() {
         let u = Matrix::from([[1, 2], [3, 4]]);
         let v = Matrix::from([[7, 4], [-2, 2]]);
 
-        assert_eq!(u * v, Matrix::from([[3, 8], [13, 20]]))
+        assert_eq!(u.dot(v), Matrix::from([[3, 8], [13, 20]]))
     }
 
     #[test]
@@ -16,7 +17,7 @@ mod ex07 {
         let v = Matrix::from([[5, -3, 1, 4], [-9, 7, 0, -5]]);
 
         assert_eq!(
-            u * v,
+            u.dot(v),
             Matrix::from([
                 [-13, 11, 1, -6],
                 [-21, 19, 3, -8],
@@ -32,7 +33,7 @@ mod ex07 {
         let v = Matrix::from([[5, -3, 1, 4], [-9, 7, 0, -5]]);
 
         assert_eq!(
-            u * v,
+            u.dot(v),
             Matrix::from([[-13, 11, 1, -6], [-21, 19, 3, -8], [-19, 13, -2, -13]])
         )
     }
@@ -42,6 +43,6 @@ mod ex07 {
         let u = Matrix::from([[1, 2, 3, 0], [4, 5, 6, 0], [7, 8, 9, 0], [0, 0, 0, 1]]);
         let v = Matrix::from([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]);
 
-        assert_eq!(u * v, u)
+        assert_eq!(u.dot(v), u)
     }
 }
