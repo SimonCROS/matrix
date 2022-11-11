@@ -29,6 +29,23 @@ where
     }
 }
 
+impl<const SIZE: usize, K> Vector<SIZE, K>
+where
+    K: Field ,
+{
+    pub fn norm_1(&self) -> f32 {
+        unimplemented!()
+    }
+
+    pub fn norm(&self) -> f32 {
+        unimplemented!()
+    }
+
+    pub fn norm_inf(&self) -> f32 {
+        unimplemented!()
+    }
+}
+
 impl<const SIZE: usize, K> From<[K; SIZE]> for Vector<SIZE, K>
 where
     K: Field,
