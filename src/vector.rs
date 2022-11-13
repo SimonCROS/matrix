@@ -1,6 +1,6 @@
-use crate::traits::{Dot, Field};
+use crate::traits::{Dot, Field, Norm};
 use std::fmt::{self, Debug, Display, Formatter};
-use std::ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign, Div};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct Vector<const SIZE: usize, K>(pub(super) [K; SIZE]);
@@ -20,7 +20,6 @@ where
         coefs: [K; LEN],
     ) -> Vector<SIZE, K> {
         let mut iter = u.into_iter().zip(coefs);
-
         let mut acc = iter.next().map(|i| i.0.mul(i.1)).unwrap_or_default();
         for i in iter {
             acc.add_assign(i.0.mul(i.1))
@@ -31,18 +30,22 @@ where
 
 impl<const SIZE: usize, K> Vector<SIZE, K>
 where
-    K: Field ,
+    K: Field + Norm + Div<f32, Output = f32>,
 {
     pub fn norm_1(&self) -> f32 {
-        unimplemented!()
+        self.0.iter().fold(0.0, |acc, f| acc + (*f).norm())
     }
 
     pub fn norm(&self) -> f32 {
-        unimplemented!()
+        self.0.iter().fold(0.0, |acc, f| acc + (*f * *f).norm()).sqrt()
     }
 
     pub fn norm_inf(&self) -> f32 {
-        unimplemented!()
+        self.0.iter().map(|f| (*f).norm()).reduce(f32::max).unwrap_or_default()
+    }
+
+    pub fn angle_cos(&self, v: &Self) -> f32 {
+        self.dot(*v) / (self.norm() * v.norm())
     }
 }
 

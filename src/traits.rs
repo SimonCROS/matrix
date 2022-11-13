@@ -1,8 +1,9 @@
-use std::ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign, Div};
 
 pub trait Field = Add<Output = Self>
     + Sub<Output = Self>
     + Mul<Output = Self>
+    + Div<Output = Self>
     + AddAssign
     + SubAssign
     + MulAssign
@@ -26,4 +27,32 @@ pub trait Lerp<Rhs = Self> {
     type Output;
 
     fn lerp(self, other: Self, t: f32) -> Self::Output;
+}
+
+pub trait Norm {
+    fn norm(self) -> f32;
+}
+
+impl Norm for f32 {
+    fn norm(self) -> f32 {
+        self.abs() as f32
+    }
+}
+
+impl Norm for f64 {
+    fn norm(self) -> f32 {
+        self.abs() as f32
+    }
+}
+
+impl Norm for i32 {
+    fn norm(self) -> f32 {
+        self.abs() as f32
+    }
+}
+
+impl Norm for i64 {
+    fn norm(self) -> f32 {
+        self.abs() as f32
+    }
 }
