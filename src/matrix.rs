@@ -14,12 +14,16 @@ where
 {
     /// Returns the size of the matrix in a tuple
     /// (rows: usize, cols: usize)
-    pub fn size(&self) -> (usize, usize) {
+    pub const fn size(&self) -> (usize, usize) {
         (ROWS, COLS)
     }
 
     pub const fn is_square(&self) -> bool {
         ROWS == COLS
+    }
+
+    pub fn row_echelon(&self) -> Self {
+        unimplemented!()
     }
 }
 
