@@ -1,8 +1,8 @@
 use crate::traits::{Dot, Field, Norm};
 use std::fmt::{self, Debug, Display, Formatter};
-use std::ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign, Div};
+use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Sub, SubAssign};
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Vector<const SIZE: usize, K>(pub(super) [K; SIZE]);
 
 impl<const SIZE: usize, K> Vector<SIZE, K>
@@ -28,6 +28,19 @@ where
     }
 }
 
+impl<K> Vector<3, K>
+where
+    K: Field,
+{
+    pub fn cross(&self, v: &Self) -> Self {
+        Self([
+            (self.0[1] * v.0[2]) - (self.0[2] * v.0[1]),
+            (self.0[2] * v.0[0]) - (self.0[0] * v.0[2]),
+            (self.0[0] * v.0[1]) - (self.0[1] * v.0[0]),
+        ])
+    }
+}
+
 impl<const SIZE: usize, K> Vector<SIZE, K>
 where
     K: Field + Norm + Div<f32, Output = f32>,
@@ -37,15 +50,22 @@ where
     }
 
     pub fn norm(&self) -> f32 {
-        self.0.iter().fold(0.0, |acc, f| acc + (*f * *f).norm()).sqrt()
+        self.0
+            .iter()
+            .fold(0.0, |acc, f| acc + (*f * *f).norm())
+            .sqrt()
     }
 
     pub fn norm_inf(&self) -> f32 {
-        self.0.iter().map(|f| (*f).norm()).reduce(f32::max).unwrap_or_default()
+        self.0
+            .iter()
+            .map(|f| (*f).norm())
+            .reduce(f32::max)
+            .unwrap_or_default()
     }
 
     pub fn angle_cos(&self, v: &Self) -> f32 {
-        self.dot(*v) / (self.norm() * v.norm())
+        self.dot(v) / (self.norm() * v.norm())
     }
 }
 
@@ -122,14 +142,14 @@ where
     }
 }
 
-impl<const SIZE: usize, K> Dot<Vector<SIZE, K>> for Vector<SIZE, K>
+impl<const SIZE: usize, K> Dot<&Vector<SIZE, K>> for Vector<SIZE, K>
 where
     K: Field,
 {
     type Output = K;
 
     /// Complexity: `O(n)`
-    fn dot(self, other: Vector<SIZE, K>) -> Self::Output {
+    fn dot(&self, other: &Vector<SIZE, K>) -> Self::Output {
         self.0
             .into_iter()
             .zip(other.0)

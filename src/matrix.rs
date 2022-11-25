@@ -3,7 +3,7 @@ use crate::traits::{Dot, Field, Transpose};
 use std::fmt::{self, Debug, Display, Formatter};
 use std::ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign};
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Matrix<const ROWS: usize, const COLS: usize, K>([Vector<COLS, K>; ROWS])
 where
     K: Field;
@@ -20,6 +20,20 @@ where
 
     pub const fn is_square(&self) -> bool {
         ROWS == COLS
+    }
+}
+
+impl<const ROWS: usize, K> Matrix<ROWS, ROWS, K>
+where
+    K: Field,
+{
+    pub fn trace(&self) -> K {
+        let mut val = K::default();
+    
+        for i in 0..ROWS {
+           val += self.0[i].0[i]; 
+        }
+        val
     }
 }
 
@@ -68,7 +82,7 @@ where
 {
     type Output = Matrix<COLS, ROWS, K>;
 
-    fn transpose(self) -> Self::Output {
+    fn transpose(&self) -> Self::Output {
         let mut i = 0;
 
         Matrix::<COLS, ROWS, K>([(); COLS].map(|_| {
@@ -123,24 +137,41 @@ where
     }
 }
 
-impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K> Dot<Matrix<COLS, OCOLS, K>>
+impl<const ROWS: usize, const COLS: usize, K> Dot<&Vector<COLS, K>>
+    for Matrix<ROWS, COLS, K>
+where
+    K: Field,
+{
+    type Output = Vector<ROWS, K>;
+
+    fn dot(&self, other: &Vector<COLS, K>) -> Self::Output {
+        let mut i = 0;
+
+        Vector::<ROWS, K>([(); ROWS].map(|_| {
+            i += 1;
+            self.0[i - 1].dot(other)
+        }))
+    }
+}
+
+impl<const ROWS: usize, const COLS: usize, const OCOLS: usize, K> Dot<&Matrix<COLS, OCOLS, K>>
     for Matrix<ROWS, COLS, K>
 where
     K: Field,
 {
     type Output = Matrix<ROWS, OCOLS, K>;
 
-    fn dot(self, other: Matrix<COLS, OCOLS, K>) -> Self::Output {
+    fn dot(&self, other: &Matrix<COLS, OCOLS, K>) -> Self::Output {
         let other = other.transpose();
         let mut i = 0;
 
         Matrix::<ROWS, OCOLS, K>([(); ROWS].map(|_| {
-            let mut j = 0;
-
             i += 1;
+            
+            let mut j = 0;
             Vector([(); OCOLS].map(|_| {
                 j += 1;
-                self.0[i - 1].dot(other.0[j - 1])
+                self.0[i - 1].dot(&other.0[j - 1])
             }))
         }))
     }
