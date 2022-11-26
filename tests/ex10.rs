@@ -7,20 +7,20 @@ mod ex10 {
         let u = Matrix::from([[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]]);
         assert_eq!(
             u.row_echelon(),
-            Matrix::from([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+            Matrix::from([[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]])
         )
     }
 
     #[test]
     fn matrix_2_8_transpose() {
         let u = Matrix::from([[1., 2.], [3., 4.]]);
-        assert_eq!(u.row_echelon(), Matrix::from([[1.0, 0.0], [0.0, 1.0]]))
+        assert_eq!(u.row_echelon(), Matrix::from([[1., 0.], [0., 1.]]))
     }
 
     #[test]
     fn matrix_4_3_transpose() {
         let u = Matrix::from([[1., 2.], [2., 4.]]);
-        assert_eq!(u.row_echelon(), Matrix::from([[1.0, 2.0], [0.0, 0.0]]))
+        assert_eq!(u.row_echelon(), Matrix::from([[1., 2.], [0., 0.]]))
     }
 
     #[test]
@@ -33,9 +33,9 @@ mod ex10 {
         assert_eq!(
             u.row_echelon(),
             Matrix::from([
-                [1.0, 0.625, 0.0, 0.0, -12.1666667],
-                [0.0, 0.0, 1.0, 0.0, -3.6666667],
-                [0.0, 0.0, 0.0, 1.0, 29.5],
+                [1., 0.625, 0., 0., -12.1666667],
+                [0., 0., 1., 0., -3.6666667],
+                [0., 0., 0., 1., 29.5],
             ])
         )
     }
