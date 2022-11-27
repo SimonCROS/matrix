@@ -1,15 +1,14 @@
-use crate::traits::{Dot, Field, Lerp, Scl, SclAssign};
-use std::fmt::{self, Debug, Display, Formatter};
-use std::ops::{Add, AddAssign, MulAssign, Sub, SubAssign};
+use crate::traits::Lerp;
+use std::ops::{Add, Mul, Sub};
 
 impl<T> Lerp<T> for T
 where
-    T: Add<Output = Self> + Sub<Output = Self> + Mul<f32, Output = Self>,
+    T: Add<Output = Self> + Sub<Output = Self> + Mul<f32, Output = Self> + Clone,
 {
     type Output = Self;
 
     /// Complexity: `O(n)`
-    fn lerp(self, other: Self, t: f32) -> Self::Output {
-        self.add(other.sub(self).mul(t))
+    fn lerp(&self, other: Self, t: f32) -> Self::Output {
+        self.clone().add(other.sub(self.clone()).mul(t))
     }
 }

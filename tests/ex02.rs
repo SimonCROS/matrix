@@ -1,23 +1,40 @@
 #[cfg(test)]
 mod ex02 {
-    use matrix::vector::Vector;
+    use matrix::{matrix::Matrix, traits::Lerp, vector::Vector};
 
     #[test]
-    fn identity_linear_combinaison() {
-        let v1 = Vector::from([1., 0., 0.]);
-        let v2 = Vector::from([0., 1., 0.]);
-        let v3 = Vector::from([0., 0., 1.]);
-        let result = Vector::from([10., -2., 0.5]);
-
-        assert_eq!(Vector::linear_combination([v1, v2, v3], [10., -2., 0.5]), result);
+    fn lerp_float_zero() {
+        assert_eq!(0f32.lerp(1., 0.), 0.)
     }
 
     #[test]
-    fn basic_linear_combinaison() {
-        let v1 = Vector::from([1, 2, 3]);
-        let v2 = Vector::from([0, 10, -100]);
-        let result = Vector::from([10, 0, 230]);
+    fn lerp_float_one() {
+        assert_eq!(0f32.lerp(1., 1.), 1.)
+    }
 
-        assert_eq!(Vector::linear_combination([v1, v2], [10, -2]), result);
+    #[test]
+    fn lerp_float_middle() {
+        assert_eq!(0f32.lerp(1., 0.5), 0.5)
+    }
+
+    #[test]
+    fn lerp_float() {
+        assert_eq!(21f32.lerp(42., 0.3), 27.3)
+    }
+
+    #[test]
+    fn lerp_vec() {
+        assert_eq!(
+            Vector::from([2., 1.]).lerp(Vector::from([4., 2.]), 0.3),
+            Vector::from([2.6, 1.3])
+        )
+    }
+
+    #[test]
+    fn lerp_matrix() {
+        assert_eq!(
+            Matrix::from([[2., 1.], [3., 4.]]).lerp(Matrix::from([[20., 10.], [30., 40.]]), 0.5),
+            Matrix::from([[11., 5.5], [16.5, 22.]])
+        );
     }
 }
