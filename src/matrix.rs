@@ -21,9 +21,17 @@ where
     pub const fn is_square(&self) -> bool {
         ROWS == COLS
     }
+}
 
+// TODO Use K
+impl<const ROWS: usize, const COLS: usize> Matrix<ROWS, COLS, f32>
+{
     pub fn row_echelon(&self) -> Self {
-        unimplemented!()
+        let mut res = self.clone();
+        for i in 0..ROWS {
+            res.0[i] *= 1. / res.0[i].0[0];
+        }
+        res
     }
 }
 
