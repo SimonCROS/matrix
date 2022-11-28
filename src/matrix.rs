@@ -25,11 +25,11 @@ where
 
 impl<const ROWS: usize, const COLS: usize, K> Matrix<ROWS, COLS, K>
 where
-    K: Field + Neg<Output = K> + Display + std::fmt::Debug,
+    K: Field + Neg<Output = K>,
     f32: Div<K, Output = K>,
 {
     fn row_echelon_step(mat: &mut Self, row: usize, col: usize) {
-        println!("Normalize row {0}, based on column {1}.", row, col);
+        // Normalize row, based on column."
         mat.0[row] *= 1. / mat.0[row].0[col];
 
         for mul_row in 0..ROWS {
@@ -37,10 +37,7 @@ where
                 continue;
             }
             let scl = -mat.0[mul_row].0[col];
-            println!(
-                "Multiply row {0}, by {1} and add it to row {2}.",
-                row, scl, mul_row
-            );
+            // Multiply row, by scl and add it to mul_row.
             mat.0[row]
                 .0
                 .clone()
@@ -51,19 +48,15 @@ where
     }
 
     pub fn row_echelon(&self) -> Self {
-        println!("Row-echelon of \n{}", self);
         let mut res = self.clone();
         for row in 0..ROWS {
             for col in 0..COLS {
                 if res.0[row].0[col] == K::default() {
-                    println!(
-                        "Row {0} at column {1} is null, we need to swap the rows.",
-                        row, col
-                    );
+                    // Empty, try to swap
 
                     for other_row in row..ROWS {
                         if res.0[other_row].0[col] != K::default() {
-                            println!("The first nonzero element is at row {}", other_row);
+                            // Swap candidate found
                             res.0.swap(row, other_row);
                             break;
                         }
@@ -74,10 +67,7 @@ where
                     break;
                 }
             }
-            println!("Row-echelon of of \n{}OK for row \n{}", res, row);
         }
-        println!("");
-        println!("");
         res
     }
 }
