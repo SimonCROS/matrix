@@ -7,7 +7,7 @@ mod ex05 {
         let u = Vector::from([1., 0.]);
         let v = Vector::from([1., 0.]);
 
-        assert!(u.angle_cos(&v) - 1.0 < f32::EPSILON);
+        assert!(u.angle_cos(&v) - 1.0 <= f32::EPSILON);
     }
 
     #[test]
@@ -15,7 +15,7 @@ mod ex05 {
         let u = Vector::from([1., 0.]);
         let v = Vector::from([0., 1.]);
 
-        assert!(u.angle_cos(&v) - 0.0 < f32::EPSILON);
+        assert!(u.angle_cos(&v) - 0.0 <= f32::EPSILON);
     }
 
     #[test]
@@ -23,7 +23,7 @@ mod ex05 {
         let u = Vector::from([-1., 1.]);
         let v = Vector::from([ 1., -1.]);
 
-        assert!(u.angle_cos(&v) - -1.0 < f32::EPSILON);
+        assert!(u.angle_cos(&v) - -1.0 <= f32::EPSILON);
     }
 
     #[test]
@@ -31,7 +31,7 @@ mod ex05 {
         let u = Vector::from([2., 1.]);
         let v = Vector::from([4., 2.]);
 
-        assert!(u.angle_cos(&v) - 1.0 < f32::EPSILON);
+        assert!(u.angle_cos(&v) - 1.0 <= f32::EPSILON);
     }
 
     #[test]

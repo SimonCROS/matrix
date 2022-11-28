@@ -9,7 +9,8 @@ pub trait Field = Add<Output = Self>
     + MulAssign
     + Copy
     + Sized
-    + Default;
+    + Default
+    + PartialEq<Self>;
 
 pub trait Transpose<Rhs = Self> {
     type Output;
