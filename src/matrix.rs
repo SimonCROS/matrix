@@ -84,6 +84,14 @@ where
         }
         val
     }
+
+    fn determinant_step(&self, row: usize, col: usize) -> K {
+        
+    }
+
+    pub fn determinant(&self) -> K {
+        unimplemented!()
+    }
 }
 
 impl<const ROWS: usize, const COLS: usize, K> From<[[K; COLS]; ROWS]> for Matrix<ROWS, COLS, K>
