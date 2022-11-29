@@ -3,6 +3,18 @@ mod ex11 {
     use matrix::matrix::Matrix;
 
     #[test]
+    fn determinant_empty() {
+        let u: Matrix<0, 0, f32> = Matrix::from([]);
+        assert_eq!(u.determinant(), 0.0);
+    }
+
+    #[test]
+    fn determinant_oneone() {
+        let u = Matrix::from([[5.]]);
+        assert_eq!(u.determinant(), 0.0);
+    }
+
+    #[test]
     fn determinant_zero() {
         let u = Matrix::from([[1., -1.], [-1., 1.]]);
         assert_eq!(u.determinant(), 0.0);
