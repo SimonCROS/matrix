@@ -85,11 +85,10 @@ where
         val
     }
 
-    fn determinant_step(&self, row: usize, cols: &mut Vec<usize>) -> K {
-        let filtered_cols = {0..ROWS}.filter(|i| !cols.contains(i));
+    fn determinant_step(&self, row: usize, cols: &mut [usize; ROWS]) -> K {
+        let filtered_cols = { 0..ROWS }.filter(|i| !cols.contains(i));
 
-        if ROWS == row
-        {
+        if ROWS == row {
             return self.0[row].0[filtered_cols.next().unwrap_or_default()];
         }
 
@@ -100,7 +99,8 @@ where
     }
 
     pub fn determinant(&self) -> K {
-        let mut cols = vec![ROWS];
+        let cols: [usize; ROWS] = [1; ROWS];
+        self.determinant_step(0, &mut cols);
         unimplemented!()
     }
 }
