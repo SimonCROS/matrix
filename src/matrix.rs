@@ -86,22 +86,37 @@ where
     }
 
     fn determinant_step(&self, row: usize, cols: &mut [usize; ROWS]) -> K {
-        let filtered_cols = { 0..ROWS }.filter(|i| !cols.contains(i));
+        let mut ret: K = K::default();
+        let mut min: bool = false;
 
-        if ROWS == row {
-            return self.0[row].0[filtered_cols.next().unwrap_or_default()];
+        println!("Row {}, cols {:?} (mat size {})", row, cols, ROWS);
+
+        for (col, e) in cols.clone().iter().enumerate() {
+            if *e == 0 {
+                continue;
+            }
+
+            if row == ROWS - 1 {
+                return self.0[row].0[col];
+            }
+
+            cols[col] = 0;
+            let scl = self.0[row].0[col] * self.determinant_step(row + 1, cols);
+            if min {
+                ret -= scl;
+            } else {
+                ret += scl;
+            }
+            min = !min;
+            cols[col] = 1;
         }
 
-        cols.push(col);
-        let sub = self.determinant_step(row, cols);
-        cols.pop();
-        return r;
+        return ret;
     }
 
     pub fn determinant(&self) -> K {
-        let cols: [usize; ROWS] = [1; ROWS];
-        self.determinant_step(0, &mut cols);
-        unimplemented!()
+        let mut cols: [usize; ROWS] = [1; ROWS];
+        self.determinant_step(0, &mut cols)
     }
 }
 

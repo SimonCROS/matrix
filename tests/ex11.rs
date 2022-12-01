@@ -11,7 +11,7 @@ mod ex11 {
     #[test]
     fn determinant_oneone() {
         let u = Matrix::from([[5.]]);
-        assert_eq!(u.determinant(), 0.0);
+        assert_eq!(u.determinant(), 5.0);
     }
 
     #[test]
