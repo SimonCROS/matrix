@@ -89,8 +89,6 @@ where
         let mut ret: K = K::default();
         let mut min: bool = false;
 
-        println!("Row {}, cols {:?} (mat size {})", row, cols, ROWS);
-
         for (col, e) in cols.clone().iter().enumerate() {
             if *e == 0 {
                 continue;
@@ -117,6 +115,13 @@ where
     pub fn determinant(&self) -> K {
         let mut cols: [usize; ROWS] = [1; ROWS];
         self.determinant_step(0, &mut cols)
+    }
+
+    pub fn inverse(&self) -> Result<Self, String> {
+        // if self.determinant() == K::default() {
+        //     return Err("This matrix does not have inverse.".to_owned());
+        // }
+        unimplemented!()
     }
 }
 

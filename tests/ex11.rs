@@ -4,7 +4,7 @@ mod ex11 {
 
     #[test]
     fn determinant_empty() {
-        let u: Matrix<0, 0, f32> = Matrix::from([]);
+        let u = Matrix::<0, 0, f32>::default();
         assert_eq!(u.determinant(), 0.0);
     }
 
@@ -33,7 +33,17 @@ mod ex11 {
     }
 
     #[test]
-    fn determinant_example2() {
+    fn hard_3_3() {
+        let u = Matrix::from([
+            [2., 5., 2.],
+            [4., 2.5, 20.],
+            [3., 9., 4.],
+        ]);
+        assert_eq!(u.determinant(), -63.0);
+    }
+
+    #[test]
+    fn hard_4_4() {
         let u = Matrix::from([
             [8., 5., -2., 4.],
             [4., 2.5, 20., 4.],
@@ -41,5 +51,17 @@ mod ex11 {
             [28., -4., 17., 1.],
         ]);
         assert_eq!(u.determinant(), 1032.0);
+    }
+
+    #[test]
+    fn hard_5_5() {
+        let u = Matrix::from([
+            [8., 5., -2., 4., 6.],
+            [4., 2.5, 20., 4., 5.],
+            [8., 5., 1., 4., 7.],
+            [28., -4., 17., 1., 6.],
+            [57., -12., 7., 6., 4.],
+        ]);
+        assert_eq!(u.determinant(), 21523.0);
     }
 }
