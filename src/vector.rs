@@ -1,6 +1,6 @@
-use crate::traits::{Dot, Field, Norm};
+use crate::traits::{Dot, Field};
 use std::fmt::{self, Debug, Display, Formatter};
-use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Vector<const SIZE: usize, K>(pub(super) [K; SIZE]);
@@ -43,7 +43,7 @@ where
 
 impl<const SIZE: usize, K> Vector<SIZE, K>
 where
-    K: Field + Norm + Div<f32, Output = f32>,
+    K: Field + Div<f32, Output = f32>,
 {
     pub fn norm_1(&self) -> f32 {
         self.0.iter().fold(0.0, |acc, f| acc + (*f).norm())
@@ -142,6 +142,20 @@ where
     }
 }
 
+impl<const SIZE: usize, K, S> Div<S> for Vector<SIZE, K>
+where
+    K: Field + DivAssign<S>,
+    S: Field,
+{
+    type Output = Vector<SIZE, K>;
+
+    fn div(self, other: S) -> Self::Output {
+        let mut result = self;
+        result /= other;
+        result
+    }
+}
+
 impl<const SIZE: usize, K> Dot<&Vector<SIZE, K>> for Vector<SIZE, K>
 where
     K: Field,
@@ -190,6 +204,19 @@ where
     fn mul_assign(&mut self, other: S) {
         for cell in &mut self.0 {
             *cell *= other;
+        }
+    }
+}
+
+impl<const SIZE: usize, K, S> DivAssign<S> for Vector<SIZE, K>
+where
+    K: Field + DivAssign<S>,
+    S: Field,
+{
+    /// Complexity: `O(n)`
+    fn div_assign(&mut self, other: S) {
+        for cell in &mut self.0 {
+            *cell /= other;
         }
     }
 }

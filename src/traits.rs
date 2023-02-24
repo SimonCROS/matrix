@@ -1,4 +1,4 @@
-use std::ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign, Div};
+use std::ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign, Div, DivAssign};
 
 pub trait Field = Add<Output = Self>
     + Sub<Output = Self>
@@ -7,11 +7,12 @@ pub trait Field = Add<Output = Self>
     + AddAssign
     + SubAssign
     + MulAssign
+    + DivAssign
     + Copy
     + Sized
-    + Default
     + Zero
     + One
+    + Norm
     + PartialEq<Self>;
 
 pub trait Zero {
