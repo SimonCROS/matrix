@@ -85,7 +85,7 @@ where
 {
     /// Complexity `O(n)`
     fn default() -> Self {
-        Self([(); SIZE].map(|_| K::default()))
+        Self([(); SIZE].map(|_| K::zero()))
     }
 }
 
@@ -153,7 +153,7 @@ where
         self.0
             .into_iter()
             .zip(other.0)
-            .fold(K::default(), |acc, (v1, v2)| acc + (v1 * v2))
+            .fold(K::zero(), |acc, (v1, v2)| acc + (v1 * v2))
     }
 }
 

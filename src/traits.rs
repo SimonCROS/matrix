@@ -10,7 +10,17 @@ pub trait Field = Add<Output = Self>
     + Copy
     + Sized
     + Default
+    + Zero
+    + One
     + PartialEq<Self>;
+
+pub trait Zero {
+    fn zero() -> Self;
+}
+
+pub trait One {
+    fn one() -> Self;
+}
 
 pub trait Transpose<Rhs = Self> {
     type Output;
@@ -34,26 +44,23 @@ pub trait Norm {
     fn norm(&self) -> f32;
 }
 
-impl Norm for f32 {
-    fn norm(&self) -> f32 {
-        self.abs() as f32
-    }
-}
+impl Zero for i8 { fn zero() -> Self { 0 } }
+impl Zero for i16 { fn zero() -> Self { 0 } }
+impl Zero for i32 { fn zero() -> Self { 0 } }
+impl Zero for i64 { fn zero() -> Self { 0 } }
+impl Zero for f32 { fn zero() -> Self { 0. } }
+impl Zero for f64 { fn zero() -> Self { 0. } }
 
-impl Norm for f64 {
-    fn norm(&self) -> f32 {
-        self.abs() as f32
-    }
-}
+impl One for i8 { fn one() -> Self { 1 } }
+impl One for i16 { fn one() -> Self { 1 } }
+impl One for i32 { fn one() -> Self { 1 } }
+impl One for i64 { fn one() -> Self { 1 } }
+impl One for f32 { fn one() -> Self { 1. } }
+impl One for f64 { fn one() -> Self { 1. } }
 
-impl Norm for i32 {
-    fn norm(&self) -> f32 {
-        self.abs() as f32
-    }
-}
-
-impl Norm for i64 {
-    fn norm(&self) -> f32 {
-        self.abs() as f32
-    }
-}
+impl Norm for i8 { fn norm(&self) -> f32 { self.abs() as f32 } }
+impl Norm for i16 { fn norm(&self) -> f32 { self.abs() as f32 } }
+impl Norm for i32 { fn norm(&self) -> f32 { self.abs() as f32 } }
+impl Norm for i64 { fn norm(&self) -> f32 { self.abs() as f32 } }
+impl Norm for f32 { fn norm(&self) -> f32 { self.abs() as f32 } }
+impl Norm for f64 { fn norm(&self) -> f32 { self.abs() as f32 } }

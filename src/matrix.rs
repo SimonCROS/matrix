@@ -51,18 +51,18 @@ where
         let mut res = self.clone();
         for row in 0..ROWS {
             for col in 0..COLS {
-                if res.0[row].0[col] == K::default() {
+                if res.0[row].0[col] == K::zero() {
                     // Empty, try to swap
 
                     for other_row in row..ROWS {
-                        if res.0[other_row].0[col] != K::default() {
+                        if res.0[other_row].0[col] != K::zero() {
                             // Swap candidate found
                             res.0.swap(row, other_row);
                             break;
                         }
                     }
                 }
-                if res.0[row].0[col] != K::default() {
+                if res.0[row].0[col] != K::zero() {
                     Self::row_echelon_step(&mut res, row, col);
                     break;
                 }
@@ -76,8 +76,17 @@ impl<const ROWS: usize, K> Matrix<ROWS, ROWS, K>
 where
     K: Field,
 {
+    pub fn identity() -> Self {
+        let mut mat = Self::default();
+
+        for i in 0..ROWS {
+            mat.0[i].0[i] = K::one()
+        }
+        mat
+    }
+
     pub fn trace(&self) -> K {
-        let mut val = K::default();
+        let mut val = K::zero();
 
         for i in 0..ROWS {
             val += self.0[i].0[i];
@@ -86,7 +95,7 @@ where
     }
 
     fn determinant_step(&self, row: usize, cols: &mut [usize; ROWS]) -> K {
-        let mut ret: K = K::default();
+        let mut ret: K = K::zero();
         let mut min: bool = false;
 
         for (col, e) in cols.clone().iter().enumerate() {
@@ -118,10 +127,13 @@ where
     }
 
     pub fn inverse(&self) -> Result<Self, String> {
-        // if self.determinant() == K::default() {
-        //     return Err("This matrix does not have inverse.".to_owned());
-        // }
-        unimplemented!()
+        if self.determinant() == K::zero() {
+            return Err("This matrix does not have inverse.".to_owned());
+        }
+
+        let result: Self = Matrix::identity();
+
+        Ok(result)
     }
 }
 
