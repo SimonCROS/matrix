@@ -1,6 +1,7 @@
 #[cfg(test)]
 mod ex12 {
     use matrix::matrix::Matrix;
+    use matrix::traits::{Dot};
 
     #[test]
     fn determinant_zero() {
@@ -31,6 +32,16 @@ mod ex12 {
     }
 
     #[test]
+    fn inverse_counterclockwise() -> Result<(), String> {
+        let u = Matrix::from([[0., -1.], [1., 0.]]);
+        assert_eq!(
+            u.inverse()?,
+            Matrix::from([[0., 1.], [-1., 0.],])
+        );
+        Ok(())
+    }
+
+    #[test]
     fn inverse_example() -> Result<(), String> {
         let u = Matrix::from([
             [8.0f32, 5., -2.],
@@ -43,6 +54,16 @@ mod ex12 {
                 [-0.781609195, -0.126436782, 0.965517241],
                 [0.143678161, 0.074712650, -0.206896552],
             ])
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn inverse_check() -> Result<(), String> {
+        let u = Matrix::from([[0., -1.], [1., 0.]]);
+        assert_eq!(
+            u.dot(&u.inverse()?),
+            Matrix::<2, 2, f32>::identity()
         );
         Ok(())
     }
