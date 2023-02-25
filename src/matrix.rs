@@ -71,9 +71,11 @@ where
         res
     }
 
-    // pub fn row_echelon(&self) -> Self {
-    //     unimplemented!()
-    // }
+    pub fn rank(&self) -> usize {
+        let echelon = self.row_echelon();
+
+        echelon.0.iter().filter(|v| v.0 != Vector::<COLS, K>::default().0).count()
+    }
 }
 
 impl<const ROWS: usize, K> Matrix<ROWS, ROWS, K>
