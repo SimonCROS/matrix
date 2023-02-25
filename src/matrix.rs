@@ -1,7 +1,7 @@
 use super::vector::Vector;
 use crate::traits::{Dot, Field, Transpose};
 use std::fmt::{self, Debug, Display, Formatter};
-use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub, SubAssign, Index, IndexMut};
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Matrix<const ROWS: usize, const COLS: usize, K>([Vector<COLS, K>; ROWS])
@@ -20,6 +20,10 @@ where
 
     pub const fn is_square(&self) -> bool {
         ROWS == COLS
+    }
+
+    pub fn iter(&self) -> core::slice::Iter<Vector<COLS, K>> {
+        self.0.iter()
     }
 }
 
@@ -351,5 +355,22 @@ where
         for line in &mut self.0 {
             line.mul_assign(other);
         }
+    }
+}
+
+impl<const ROWS: usize, const COLS: usize, K> Index<usize> for Matrix<ROWS, COLS, K>
+where
+    K: Field {
+    type Output = Vector<COLS, K>;
+    fn index<'a>(&'a self, i: usize) -> &'a Vector<COLS, K> {
+        &self.0[i]
+    }
+}
+
+impl<const ROWS: usize, const COLS: usize, K> IndexMut<usize> for Matrix<ROWS, COLS, K>
+where
+    K: Field {
+    fn index_mut<'a>(&'a mut self, i: usize) -> &'a mut Vector<COLS, K> {
+        &mut self.0[i]
     }
 }

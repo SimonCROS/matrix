@@ -1,6 +1,6 @@
 use crate::traits::{Dot, Field};
 use std::fmt::{self, Debug, Display, Formatter};
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign, Index, IndexMut};
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Vector<const SIZE: usize, K>(pub(super) [K; SIZE]);
@@ -25,6 +25,10 @@ where
             acc.add_assign(i.0.mul(i.1))
         }
         acc
+    }
+
+    pub fn iter(&self) -> core::slice::Iter<K> {
+        self.0.iter()
     }
 }
 
@@ -218,5 +222,22 @@ where
         for cell in &mut self.0 {
             *cell /= other;
         }
+    }
+}
+
+impl<const SIZE: usize, K> Index<usize> for Vector<SIZE, K>
+where
+    K: Field {
+    type Output = K;
+    fn index<'a>(&'a self, i: usize) -> &'a K {
+        &self.0[i]
+    }
+}
+
+impl<const SIZE: usize, K> IndexMut<usize> for Vector<SIZE, K>
+where
+    K: Field {
+    fn index_mut<'a>(&'a mut self, i: usize) -> &'a mut K {
+        &mut self.0[i]
     }
 }
