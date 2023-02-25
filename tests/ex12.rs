@@ -46,4 +46,20 @@ mod ex12 {
         );
         Ok(())
     }
+
+    #[test]
+    fn inverse_reverse_identity() -> Result<(), String> {
+        let u = Matrix::from([
+            [0.0f32, 0., 1.],
+            [0., 1., 0.],
+            [1., 0., 0.]]);
+        assert_eq!(
+            u.inverse()?,
+            Matrix::from([
+                [0.0f32, 0., 1.],
+                [0., 1., 0.],
+                [1., 0., 0.]])
+        );
+        Ok(())
+    }
 }

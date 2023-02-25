@@ -70,6 +70,10 @@ where
         }
         res
     }
+
+    // pub fn row_echelon(&self) -> Self {
+    //     unimplemented!()
+    // }
 }
 
 impl<const ROWS: usize, K> Matrix<ROWS, ROWS, K>
@@ -134,7 +138,6 @@ where
         let mut left: Self = self.clone();
         let mut right: Self = Matrix::identity();
 
-        let mut r = 0;
         for j in 0..ROWS {
             let mut greater: Option<(K, f32, usize)> = Option::default();
 
@@ -154,38 +157,19 @@ where
             left.0[k] /= value;
             right.0[k] /= value;
 
-            if k != r {
-                left.0.swap(k, r);
-                right.0.swap(k, r);
+            if k != j {
+                left.0.swap(k, j);
+                right.0.swap(k, j);
             }
 
             for i in 0..ROWS {
-                if i != r {
+                if i != j {
                     let ratio = left.0[i].0[j] / left.0[j].0[j];
                     right.0[i] -= right.0[j].clone() * ratio;
                     left.0[i] -= left.0[j].clone() * ratio;
                 }
             }
-
-            r += 1;
         }
-
-        // for i in 0..ROWS {
-		// 	if left.0[i].0[i] == K::zero() {
-        //         return Err("This matrix does not have inverse.".to_owned())
-        //     }
-        //     for j in 0..ROWS {
-		// 		if i != j {
-        //             let ratio = left.0[j].0[i] / left.0[i].0[i];
-        //             right.0[j] -= right.0[i].clone() * ratio;
-        //             left.0[j] -= left.0[i].clone() * ratio;
-        //         }
-        //     }
-        // }
-        // for i in 0..ROWS {
-        //     right.0[i] /= left.0[i].0[i];
-        //     left.0[i] /= left.0[i].0[i];
-        // }
 
         Ok(right)
     }
