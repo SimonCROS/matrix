@@ -43,7 +43,7 @@ mod ex10 {
     #[test]
     fn row_echelon_swap_1_mid() {
         let u = Matrix::from([
-            [2., 4., 6., 8.,],
+            [2., 4., 6., 8.],
             [0., 0., 2., 4.],
             [2., 4., 6., 8.],
         ]);
