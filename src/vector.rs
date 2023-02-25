@@ -1,3 +1,4 @@
+use crate::complex::Complex;
 use crate::traits::{Dot, Field};
 use std::fmt::{self, Debug, Display, Formatter};
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign, Index, IndexMut};
@@ -26,6 +27,25 @@ where
     pub fn iter(&self) -> core::slice::Iter<K> {
         self.0.iter()
     }
+
+    pub fn norm_1(&self) -> f32 {
+        self.0.iter().fold(0.0, |acc, f| acc + (*f).norm())
+    }
+
+    pub fn norm(&self) -> f32 {
+        self.0
+            .iter()
+            .fold(0.0, |acc, f| acc + (*f * *f).norm())
+            .sqrt()
+    }
+
+    pub fn norm_inf(&self) -> f32 {
+        self.0
+            .iter()
+            .map(|f| (*f).norm())
+            .reduce(f32::max)
+            .unwrap_or_default()
+    }
 }
 
 impl<K> Vector<3, K>
@@ -45,26 +65,14 @@ impl<const SIZE: usize, K> Vector<SIZE, K>
 where
     K: Field + Div<f32, Output = f32>,
 {
-    pub fn norm_1(&self) -> f32 {
-        self.0.iter().fold(0.0, |acc, f| acc + (*f).norm())
-    }
-
-    pub fn norm(&self) -> f32 {
-        self.0
-            .iter()
-            .fold(0.0, |acc, f| acc + (*f * *f).norm())
-            .sqrt()
-    }
-
-    pub fn norm_inf(&self) -> f32 {
-        self.0
-            .iter()
-            .map(|f| (*f).norm())
-            .reduce(f32::max)
-            .unwrap_or_default()
-    }
-
     pub fn angle_cos(&self, v: &Self) -> f32 {
+        self.dot(v) / (self.norm() * v.norm())
+    }
+}
+
+impl<const SIZE: usize> Vector<SIZE, Complex>
+{
+    pub fn angle_cos(&self, v: &Self) -> Complex {
         self.dot(v) / (self.norm() * v.norm())
     }
 }

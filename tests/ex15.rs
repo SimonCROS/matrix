@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod ex12 {
-    use matrix::{complex::Complex, vector::Vector, traits::Lerp};
+    use matrix::{complex::Complex, vector::Vector, traits::{Lerp, Dot, Norm}};
 
     #[test]
     fn complex_mul_conj() {
@@ -77,12 +77,37 @@ mod ex12 {
 
     #[test]
     fn complex_ex03() {
-        let c1 = Complex::new(0., -20.);
-        let c2 = Complex::new(10., 20.);
+        let c1 = Complex::new(3., 2.);
+        let c2 = Complex::new(7., -4.);
+        let c3 = Complex::new(-2., 1.);
+        let c4 = Complex::new(-8., 2.);
 
-        let v1 = Vector::from([c1]);
-        let v2 = Vector::from([c2]);
+        let v1 = Vector::from([c1, c2]);
+        let v2 = Vector::from([c3, c4]);
 
-        assert_eq!(v1.lerp(v2, 0.5).to_string(), "[5+0i]");
+        assert_eq!(v1.dot(&v2).to_string(), "-56+45i")
+    }
+
+    #[test]
+    fn complex_ex04() {
+        let c1 = Complex::new(1., 0.);
+        let c2 = Complex::new(2., 0.);
+        let c3 = Complex::new(3., 0.);
+
+        let u = Vector::from([c1, c2, c3]);
+
+        assert_eq!([u.norm_1(), u.norm(), u.norm_inf()], [6.0, 3.74165738, 3.0]);
+    }
+
+    #[test]
+    fn complex_ex05() {
+        let c1 = Complex::new(1., 0.);
+        let c2 = Complex::new(2., 0.);
+        let c3 = Complex::new(4., 0.);
+
+        let u = Vector::from([c2, c1]);
+        let v = Vector::from([c3, c2]);
+
+        assert!(u.angle_cos(&v).norm() - 1.0 <= f32::EPSILON);
     }
 }
