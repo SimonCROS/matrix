@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod ex12 {
-    use matrix::{complex::Complex, vector::Vector, traits::{Lerp, Dot, Norm, Transpose, Zero}, matrix::Matrix};
+    use matrix::{complex::Complex, vector::Vector, traits::{Lerp, Dot, Norm, Transpose}, matrix::Matrix};
 
     #[test]
     fn complex_mul_conj() {
@@ -214,5 +214,68 @@ mod ex12 {
             u.row_echelon().to_string(),
             "[1+0i, 2+0i, 0+0i, -2+0i]\n[0+0i, 0+0i, 1+0i, 2+0i]\n[0+0i, 0+0i, 0+0i, 0+0i]"
         )
+    }
+
+    #[test]
+    fn complex_ex11() {
+        let c1 = Complex::new(8., 0.);
+        let c2 = Complex::new(5., 0.);
+        let c3 = Complex::new(-2., 0.);
+        let c4 = Complex::new(4., 0.);
+        let c5 = Complex::new(7., 0.);
+        let c6 = Complex::new(20., 0.);
+        let c7 = Complex::new(7., 0.);
+        let c8 = Complex::new(6., 0.);
+        let c9 = Complex::new(1., 0.);
+
+        let u = Matrix::from([[c1, c2, c3], [c4, c5, c6], [c7, c8, c9]]);
+        assert_eq!(u.determinant().to_string(), "-174+0i");
+    }
+
+    #[test]
+    fn complex_ex12() -> Result<(), String> {
+        let c1 = Complex::new(8., 0.);
+        let c2 = Complex::new(5., 0.);
+        let c3 = Complex::new(-2., 0.);
+        let c4 = Complex::new(4., 0.);
+        let c5 = Complex::new(7., 0.);
+        let c6 = Complex::new(20., 0.);
+        let c7 = Complex::new(7., 0.);
+        let c8 = Complex::new(6., 0.);
+        let c9 = Complex::new(1., 0.);
+
+        let u = Matrix::from([[c1, c2, c3], [c4, c5, c6], [c7, c8, c9]]);
+        assert_eq!(
+            u.inverse()?.to_string(),
+            "[0.64942527+0i, 0.09770115+0i, -0.6551724+0i]\n[-0.7816092+0i, -0.12643678+0i, 0.9655172+0i]\n[0.14367816+0i, 0.07471265+0i, -0.20689656-0i]\n"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn complex_ex13() {
+        let c1 = Complex::new(8., 0.);
+        let c2 = Complex::new(5., 0.);
+        let c3 = Complex::new(-2., 0.);
+        let c4 = Complex::new(4., 0.);
+        let c5 = Complex::new(7., 0.);
+        let c6 = Complex::new(20., 0.);
+        let c7 = Complex::new(7., 0.);
+        let c8 = Complex::new(6., 0.);
+        let c9 = Complex::new(1., 0.);
+        let c10 = Complex::new(21., 0.);
+        let c11 = Complex::new(18., 0.);
+        let c12 = Complex::new(7., 0.);
+
+        let u = Matrix::from([
+            [c1, c2, c3],
+            [c4, c5, c6],
+            [c7, c8, c9],
+            [c10, c11, c12],
+        ]);
+        assert_eq!(
+            u.rank(),
+            3
+        );
     }
 }
