@@ -210,7 +210,7 @@ where
 
 impl<const ROWS: usize, const COLS: usize, K> Display for Matrix<ROWS, COLS, K>
 where
-    K: Field + Display + Debug,
+    K: Field + Display,
 {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         for line in &self.0 {

@@ -19,12 +19,8 @@ where
         u: [Vector<SIZE, K>; LEN],
         coefs: [K; LEN],
     ) -> Vector<SIZE, K> {
-        let mut iter = u.into_iter().zip(coefs);
-        let mut acc = iter.next().map(|i| i.0.mul(i.1)).unwrap_or_default();
-        for i in iter {
-            acc.add_assign(i.0.mul(i.1))
-        }
-        acc
+        let iter = u.into_iter().zip(coefs);
+        iter.fold(Self::default(), |acc, x| acc + x.0.mul(x.1))
     }
 
     pub fn iter(&self) -> core::slice::Iter<K> {
@@ -95,11 +91,11 @@ where
 
 impl<const SIZE: usize, K> Display for Vector<SIZE, K>
 where
-    K: Field + Display + Debug,
+    K: Field + Display,
 {
     /// Complexity `O(n)`
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        write!(f, "{:?}", self.0)?;
+        write!(f, "[{}]", self.0.map(|f| f.to_string()).join(", "))?;
         Ok(())
     }
 }
