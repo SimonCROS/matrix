@@ -29,50 +29,42 @@ where
 
 impl<const ROWS: usize, const COLS: usize, K> Matrix<ROWS, COLS, K>
 where
-    K: Field + Neg<Output = K>,
+    K: Field + Neg<Output = K> + Display,
     f32: Div<K, Output = K>,
 {
-    fn row_echelon_step(mat: &mut Self, row: usize, col: usize) {
-        // Normalize row, based on column."
-        mat.0[row] *= 1. / mat.0[row].0[col];
-
-        for mul_row in 0..ROWS {
-            if mul_row == row {
-                continue;
-            }
-            let scl = -mat.0[mul_row].0[col];
-            // Multiply row, by scl and add it to mul_row.
-            mat.0[row]
-                .0
-                .clone()
-                .iter()
-                .zip(mat.0[mul_row].0.iter_mut())
-                .for_each(|f| *f.1 += *f.0 * scl);
-        }
-    }
-
     pub fn row_echelon(&self) -> Self {
-        let mut res = self.clone();
-        for row in 0..ROWS {
-            for col in 0..COLS {
-                if res.0[row].0[col] == K::zero() {
-                    // Empty, try to swap
+        let mut left = self.clone();
+        let mut lead = 0;
 
-                    for other_row in row..ROWS {
-                        if res.0[other_row].0[col] != K::zero() {
-                            // Swap candidate found
-                            res.0.swap(row, other_row);
-                            break;
-                        }
+        for r in 0..ROWS {
+            if COLS <= lead {
+                break;
+            }
+            let mut i = r;
+            while left.0[i].0[lead] == K::zero() {
+                i += 1;
+                if ROWS == i {
+                    i = r;
+                    lead += 1;
+                    if COLS == lead {
+                        return left;
                     }
                 }
-                if res.0[row].0[col] != K::zero() {
-                    Self::row_echelon_step(&mut res, row, col);
-                    break;
+            }
+            left.0.swap(i, r);
+
+            if left.0[r].0[lead] != K::zero() {
+                left.0[r] /= left.0[r].0[lead];
+            }
+            for i in 0..ROWS {
+                if i != r {
+                    left.0[i] -= left.0[r].clone() * left.0[i].0[lead];
                 }
             }
+            lead += 1
         }
-        res
+
+        left
     }
 
     pub fn rank(&self) -> usize {
