@@ -1,6 +1,6 @@
 use crate::traits::{Zero, One, Norm};
 use std::fmt::{self, Debug, Display, Formatter};
-use std::ops::{Add, AddAssign, Div, Mul, MulAssign, DivAssign, Neg, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Div, Mul, MulAssign, DivAssign, Sub, SubAssign};
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Complex {
@@ -43,14 +43,6 @@ impl Sub for Complex {
             real: self.real - rhs.real,
             imag: self.imag - rhs.imag
         }
-    }
-}
-
-impl Neg for Complex {
-    type Output = Self;
-
-    fn neg(self) -> Self::Output {
-        self.conj()
     }
 }
 

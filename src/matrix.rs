@@ -1,7 +1,7 @@
 use super::vector::Vector;
 use crate::traits::{Dot, Field, Transpose};
 use std::fmt::{self, Debug, Display, Formatter};
-use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub, SubAssign, Index, IndexMut};
+use std::ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign, Index, IndexMut};
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Matrix<const ROWS: usize, const COLS: usize, K>([Vector<COLS, K>; ROWS])
@@ -25,13 +25,7 @@ where
     pub fn iter(&self) -> core::slice::Iter<Vector<COLS, K>> {
         self.0.iter()
     }
-}
 
-impl<const ROWS: usize, const COLS: usize, K> Matrix<ROWS, COLS, K>
-where
-    K: Field + Neg<Output = K> + Display,
-    f32: Div<K, Output = K>,
-{
     pub fn row_echelon(&self) -> Self {
         let mut left = self.clone();
         let mut lead = 0;
